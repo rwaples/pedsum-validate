@@ -25,7 +25,7 @@ blocked. Fields that could not be seen are marked `TODO: verify`.
 
 | # | Statistic | Who reports it | pedsum today | Notes |
 |---|---|---|---|---|
-| A1 | **Equivalent complete generations** (ECG, t), per individual and summarised | ENDOG, CFC, optiSel (`equiGen`), purgeR (`pop_t`), visPedigree | Computed inside pedigree-graph (`_ne_rates._equivalent_generations`) for `ne_individual_delta_f`, but never written out | Cheapest gap to close: add an `ecg` column to `annotated.tsv.gz` and its distribution by depth. The benchmarks need it: the purgeR atlas sum is 5500.627, and optiSel gives it for 6 named IDs. |
+| A1 | **Equivalent complete generations** (ECG, t), per individual and summarised | ENDOG, CFC, optiSel (`equiGen`), purgeR (`pop_t`), visPedigree | **Done:** `ecg` column in `annotated.tsv.gz` and `individual.distributions.ecg` | Matches purgeR (atlas sum 5500.627) and visPedigree (`deep_ped` named IDs) exactly. A per-depth mean is not reported yet. |
 | A2 | **Complete generations** (fully traced generations) per individual | ENDOG, optiSel (`fullGen`), the bear paper (mean 1.30) | Missing | `ped_depth` is the *maximum* generations traced (`maxGen`), so only the fully-traced count is missing. |
 | A3 | **Pedigree completeness by ancestral generation** (share of the 2^g ancestors known) | ENDOG, GENLIB (`gc`), optiSel | Missing | Reported per reference cohort. |
 | A4 | **Pedigree completeness index** (MacCluer PCI) | optiSel (`PCI`), ENDOG | Missing | Per individual; needs a generation cutoff `d`. |
@@ -54,7 +54,7 @@ blocked. Fields that could not be seen are marked `TODO: verify`.
 
 | # | Statistic | Who reports it | pedsum today | Notes |
 |---|---|---|---|---|
-| D1 | **Reference-population selection for Ne** | ENDOG, purgeR (`target`), optiSel (`Phen`), visPedigree | pedigree-graph `ne_individual_delta_f(reference=...)` supports it; the pedsum CLI does not expose it | Needed for exact comparison with purgeR (8.18 for all rows vs 14.01 for target) and with optiSel (Ne_C 97.96 over `Phen` with equiGen ≥ 4). Proposed: `--reference-col` or `--reference-ids FILE`. |
+| D1 | **Reference-population selection for Ne** | ENDOG, purgeR (`target`), optiSel (`Phen`), visPedigree | **Done for `ne_individual_delta_f`:** `effective-size --reference-col NAME` | Reproduces purgeR's target-population Ne for all four studbooks. The coancestry estimators still use their default population; optiSel's Ne_C 97.96 over `Phen` would need the same option there. |
 | D2 | **Ne_iΔF eligibility convention** | purgeR counts rows with t ≤ 1 as ΔF = 0 (atlas: 8.18); pedigree-graph requires t > 0 (atlas: 8.03) | Different convention, documented in pedigree-graph | Either add an option, or document the expected difference in the benchmark harness. |
 | D3 | **Generation interval** by the four pathways (sire→son, sire→daughter, dam→son, dam→daughter) | ENDOG, optiSel, CFC | pedigree-graph has `PedigreeGraph.generation_interval` (Hill 1979, sex split); pedsum does not report it as its own statistic | Needs birth years; a natural addition to `effective-size` output when `--birth-year-col` is given. |
 | D4 | **Ne from regressing F or ECG on birth year** (realised ΔF per year scaled by L) | ENDOG, Leroy et al. 2013 | Missing | Needs D3. |
@@ -67,7 +67,7 @@ blocked. Fields that could not be seen are marked `TODO: verify`.
 
 ## Suggested order
 
-1. **A1** ECG output and **D1** reference population. pedigree-graph already does both; this is just wiring.
+1. ~~**A1** ECG output and **D1** reference population.~~ Done (D1 for `ne_individual_delta_f`).
 2. **B1** Lacy fe with an explicit half-founder convention, **C1** mean kinship / MK, and **B3** fg in its kinship form.
 3. **A2–A4** completeness, **B2** fa, and **D3** generation interval.
 4. **C2–C5** and **D4–D5** on demand.
