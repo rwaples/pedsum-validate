@@ -8,38 +8,78 @@ citations, are in [`docs/benchmark-pedigrees.md`](../../docs/benchmark-pedigrees
 ## Run it
 
 From the repo root, in an environment with pedsum's dependencies plus
-[`rdata`](https://pypi.org/project/rdata/), which reads R `.rda` files:
+[`rdata`](https://pypi.org/project/rdata/), which reads R `.rda` and `.RData`
+files, and [`openpyxl`](https://pypi.org/project/openpyxl/), which reads
+`.xlsx` files:
 
 ```bash
-pip install rdata
+pip install rdata openpyxl
 python benchmarks/published/run_published.py                    # all datasets
 python benchmarks/published/run_published.py --only atlas,btped  # a subset
 ```
 
-The script needs network access to `raw.githubusercontent.com`. It exits 1 if
-any check is FAIL or ERROR. A full run takes about 15 seconds once the files are cached.
+The script needs network access to `raw.githubusercontent.com`,
+`ndownloader.figshare.com`, `downloads.sourceforge.net`,
+`www.kinsources.net` and `datadryad.org`. It exits 1 if any check is FAIL or
+ERROR.
+
+Dryad file downloads need an API token. Log in to https://datadryad.org with
+ORCID, create an API account on the *My account* page, and put its
+credentials in a file only you can read:
+
+```bash
+install -m 600 /dev/null ~/.config/pedsum/dryad.env
+# DRYAD_CLIENT_ID=<application id>
+# DRYAD_CLIENT_SECRET=<secret>
+set -a; . ~/.config/pedsum/dryad.env; set +a
+python benchmarks/published/run_published.py
+```
+
+`dryad.py` exchanges them for a token on each run. Without them, the Dryad
+datasets ERROR and the rest still run; once a file is in `.cache/`, no token
+is needed. A full run takes about 65 seconds once the files are cached
+(about 15 s of it is `effective-size` with every estimator). The largest step is F from the Soay sheep's
+6,740-row A⁻¹ (about 4.5 s; the run peaks at 0.9 GB there).
 
 ## What it does
 
 For each dataset in [`cases.yaml`](cases.yaml), the script:
 
-1. **Downloads** the file from a pinned commit of the read-only CRAN mirror on
-   GitHub into `.cache/`, and refuses it if its SHA-256 differs from the pinned
-   value.
+1. **Downloads** the file from its pinned URL into `.cache/`, and refuses it
+   if its SHA-256 differs from the pinned value. Most files come from a pinned
+   commit of the read-only CRAN mirror on GitHub or from Dryad; the others
+   are a Figshare file, a SourceForge release tarball and a Kinsources
+   export.
 2. **Converts** it to pedsum input (`.work/<name>/input.tsv`):
    - Original IDs are mapped to integers in first-appearance order.
    - The dataset's missing-parent tokens (and R `NA`) become `-1`.
    - Sex is recoded.
    - The original ID and the reference-population flag are kept as extra
      columns.
+   - `parent_overrides` corrects documented errors first, and an `ainv_list`
+     source is turned back into a parent table.
 
    This step stands in for the `convert` subcommand proposed in #6.
-3. **Runs pedsum**: `pedigree_summary.py validate`, then `summarize` on the repaired
-   output (`validate.tsv.gz`), and for datasets with a reference population
-   `effective-size --estimators ne_individual_delta_f --reference-col reference`. Its output goes to `.work/<name>/`, with the
-   commands' output logged in `pedsum.log`.
+3. **Runs pedsum**: `pedigree_summary.py validate`, then `summarize` and
+   `effective-size` on the repaired output (`validate.tsv.gz`).
+   - `effective-size` runs every estimator that can run. On a pedigree with
+     any unknown sex it leaves out the three that need sex (`ne_sex_ratio`,
+     `ne_variance_family_size`, `ne_hill_overlapping`).
+   - Datasets with a reference population add `--reference-col reference`;
+     only `ne_individual_delta_f` uses it.
+   - Output goes to `.work/<name>/`, with the commands' output logged in
+     `pedsum.log`.
 4. **Compares** each check in `cases.yaml` with the published value, within
-   that check's tolerance.
+   that check's tolerance. Where the authors deposited per-individual values
+   (`reference_values`), it also compares pedsum's value with theirs, id by
+   id.
+5. **Tabulates** pedsum's headline statistics and all eight Ne estimates for
+   every dataset in `results/pedsum_all.tsv`, and in a second table in
+   `results/results.md`, whether or not a published value exists. A
+   non-numeric Ne cell names why there is no estimate:
+   - `skipped: unknown sex`.
+   - `missing_metadata:incomplete_parentage`: the pedigree has half-founders; see #9.
+   - `null, no reason (#10)`: the estimator found no positive rate; see #10.
 
 ## Reading the results
 
@@ -66,7 +106,16 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
     sum (5500.627) and maximum (10.0639), and three named `deep_ped` animals.
   - The F of William Erasmus Darwin (0.06298828).
   - The F values of the Mrode example.
+  - The founder counts of Boichard et al. (1997), table II, for both families
+    of figure 2 and for each family alone.
   - `BTped`'s structure.
+  - Per-individual F against the authors' own: the Soay sheep's ASReml A⁻¹
+    (5,068 of 5,068 and 6,740 of 6,740), the black robin's `IndividualF`
+    (1,348 of 1,348), and an independent recursion for the red squirrel and
+    steelhead.
+  - Every pedantics count published for the Soay sheep (Bérénos et al. 2014,
+    Table 2) and the Seychelles warbler (Sparks et al., Table S3), except the
+    half-sib pairs (below).
 - **Ne from individual ΔF (Gutiérrez et al. 2008).** With
   `effective-size --reference-col`, all four purgeR studbooks reproduce the
   published reference-population Ne (14.01, 11.10, 3.84, 39.32), but only in the
@@ -82,19 +131,59 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
   which this harness does for those datasets. See issue #7. `effective-size`
   now refuses unknown sex only for the three estimators that use it, so
   `ne_individual_delta_f` runs on these studbooks.
+- **Rum red deer.** pedsum's F on the Figshare pedigree equals an independent
+  tabular-method recomputation, but 50% of calves with both parents and a
+  grandparent known are inbred, against 21.9% in Walling et al. (2011). That
+  paper used an older pedigree and only calves born 1980–2010, so these checks
+  are DIFF.
+- **Kinsources "Ancien Régime".** N, parent-child ties (8,373) and maximum
+  depth (11) match the statistics Kinsources' Puck software publishes. The
+  component count differs because Puck also links spouses, and the sex counts
+  differ by one each because pedsum infers the sex of two X-coded parents.
+- **Dryad datasets.**
+  - pedantics counts a half-sib pair that is also parent–offspring as a
+    half-sib pair; pedsum labels it parent–offspring. The Soay and warbler
+    half-sib counts differ by those pairs (DIFF).
+  - Helgeland's 1,241 birds with two full ancestral generations needs the
+    Sequoia dummy parents kept, unlike the deposited script.
+  - The song sparrow deposit has no parent table; the harness rebuilds it
+    from the A⁻¹. Its F differs from the deposited `f_coeff` by one ancestor
+    link, and the published f summary matches neither (DIFF).
+  - The scrub-jay's published A has the nadiv 2.17.2 `makeA()` bug, so its
+    diagonal disagrees with pedsum's F for 179 of 678 birds (DIFF); pedsum's
+    F is correct.
+  - The arctic fox sheet's F and the steelhead paper's statistics describe
+    fuller versions of their pedigrees, and the *Peromyscus* F apparently
+    another version (root cause UNVERIFIED). These checks are DIFF.
 - **Rounding in `summary.yaml`.** It rounds `max_F` and `mean_F` to 4 decimals.
   Exact comparisons therefore read `annotated.tsv.gz`.
 
 ## Adding a dataset
 
-1. Add an entry under `datasets:` in `cases.yaml`: the URL pinned to a commit,
-   its `sha256`, the column mapping, missing-parent tokens, and `sex_map`.
+1. Add an entry under `datasets:` in `cases.yaml`: the URL pinned to a commit
+   (or `dryad_file: <id>`, from `dryad.list_files(doi)`), its `sha256`, the column mapping, missing-parent tokens, and `sex_map`.
    - R files also need the `object` name.
-   - Use `format: whitespace_table` for gzipped whitespace-delimited text.
+   - Text files take `format: whitespace_table`, `csv`, `tsv` (which keeps
+     empty fields) or `iur_txt` (Kinsources), gzipped or not. `names` gives
+     the columns of a file with no header row, and `member` reads one file
+     out of a tar or zip archive.
+   - Excel files take `format: xlsx`, with an optional `sheet`.
+   - A deposit with only a lower-triangle A⁻¹ list takes `format:
+     ainv_list`; the parents are rebuilt by Henderson's rules.
+   - `parent_overrides: {id: {mother: ..., father: ...}}` fixes a
+     documented error that `validate` cannot repair; give the reason in a
+     comment.
+   - `reference_values` holds the authors' per-individual values: a column
+     of the same file (`{column: F}`), or a separately pinned file (a table
+     with `id_column` and `value_column`, an A⁻¹ as `ainv_rdata` or
+     `ainv_list`, or an A matrix as `square_matrix_diagonal` with
+     `subtract: 1`).
 2. Add `checks:` entries. Each needs the published value, its `source`, a `via`
    (see the header of `cases.yaml`), and a `tol` for non-integer values.
+   `reference:<name>:<agg>:<column>` compares with a `reference_values`
+   entry; `where`, `subset` and `min_grandparents` narrow the rows, and
+   `scale` and `offset` rescale the observed value.
 3. Add the source and its citation to `docs/benchmark-pedigrees.md`.
 
-Only files that can be fetched without authentication belong here. Dryad,
-Zenodo and Figshare deposits are blocked in the cloud sandbox this was built
-in. They can be added the same way where the network allows.
+Only public files belong here: anonymous downloads, or Dryad files, which
+are public but need a free API token.
