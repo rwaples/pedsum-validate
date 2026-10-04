@@ -175,13 +175,19 @@ def run_pedsum(args: list[str], log: Path) -> int:
 class Observed:
     """Lazily computed observed values for one dataset."""
 
-    def __init__(self, summary: dict[str, Any], annotated: pl.DataFrame, id_map: dict[str, int]) -> None:
+    def __init__(
+        self,
+        summary: dict[str, Any],
+        annotated: pl.DataFrame,
+        id_map: dict[str, int],
+        effective: dict[str, Any] | None,
+    ) -> None:
         """Hold one dataset's pedsum outputs and its id map."""
         self.summary = summary
         self.annotated = annotated
         self.id_map = id_map
+        self.effective = effective
         self._pg: Any = None
-        self._ecg: np.ndarray | None = None
 
     def summary_value(self, path: str) -> float:
         """Scalar at a dotted path of summary.yaml."""
@@ -190,16 +196,24 @@ class Observed:
             node = node[key]
         return float(node)
 
-    def annotated_value(self, kind: str, orig_id: str | None) -> float:
-        """Aggregate of the F column of annotated.tsv.gz."""
-        f = self.annotated["F"]
-        if kind == "sum_F":
-            return float(f.sum())
-        if kind == "max_F":
-            return float(f.max())
-        if kind == "F_of":
-            return float(self._row_value(f.to_numpy(), self.annotated["id"].to_numpy(), orig_id))
-        raise ValueError(f"unknown annotated aggregate {kind!r}")
+    def annotated_value(self, spec: str, orig_id: str | None) -> float:
+        """``<sum|max|of>:<column>`` of annotated.tsv.gz."""
+        agg, _, column = spec.partition(":")
+        values = self.annotated[column]
+        if agg == "sum":
+            return float(values.sum())
+        if agg == "max":
+            return float(values.max())
+        if agg == "of":
+            return self._row_value(values.to_numpy(), self.annotated["id"].to_numpy(), orig_id)
+        raise ValueError(f"unknown annotated aggregate {agg!r}")
+
+    def effective_value(self, path: str) -> float:
+        """``<estimator>.<field>`` of effective_size.yaml."""
+        if self.effective is None:
+            raise ValueError("effective-size was not run for this dataset")
+        estimator, _, field = path.partition(".")
+        return float(self.effective["effective_size"][estimator][field])
 
     def _row_value(self, values: np.ndarray, row_ids: np.ndarray, orig_id: str | None) -> float:
         if orig_id is None:
@@ -221,26 +235,11 @@ class Observed:
             )
         return self._pg
 
-    def engine_value(self, name: str, orig_id: str | None) -> float:
+    def engine_value(self, name: str) -> float:
         """Statistic computed with the pedigree_graph API (not exposed by the pedsum CLI)."""
         from pedigree_graph.effective_size import ne_individual_delta_f
 
         pg = self._graph()
-        if name.startswith("ecg_"):
-            if self._ecg is None:
-                # Private helper: pedigree_graph uses it for Ne_iΔF but has no public accessor yet.
-                from pedigree_graph._ne_rates import _equivalent_generations
-
-                self._ecg = np.asarray(_equivalent_generations(pg))
-            if name == "ecg_sum":
-                return float(self._ecg.sum())
-            if name == "ecg_max":
-                return float(self._ecg.max())
-            if name == "ecg_of":
-                return self._row_value(self._ecg, self.annotated["id"].to_numpy(), orig_id)
-        if name == "ne_idf_t1_reference":
-            ref = np.flatnonzero(self.annotated["reference"].fill_null(0).to_numpy() == 1)
-            return float(ne_individual_delta_f(pg, reference=ref).ne_unrelated_founders)
         if name == "ne_idf_t1_all":
             ref = np.arange(len(self.annotated))
             return float(ne_individual_delta_f(pg, reference=ref).ne_unrelated_founders)
@@ -276,8 +275,10 @@ def evaluate(check: dict[str, Any], obs: Observed | None, error: str | None) -> 
             observed = obs.summary_value(arg)
         elif kind == "annotated":
             observed = obs.annotated_value(arg, orig_id)
+        elif kind == "effective":
+            observed = obs.effective_value(arg)
         elif kind == "engine":
-            observed = obs.engine_value(arg, orig_id)
+            observed = obs.engine_value(arg)
         else:
             raise ValueError(f"unknown via {via!r}")
     except Exception as exc:  # report and keep going
@@ -314,7 +315,16 @@ def run_dataset(name: str, spec: dict[str, Any], cache: Path, work: Path) -> tup
         return None, f"summarize exited {code}; see {log}"
     summary = yaml.safe_load((ds / "summary" / "summary.yaml").read_text())
     annotated = pl.read_csv(ds / "summary" / "annotated.tsv.gz", separator="\t", infer_schema_length=None)
-    return Observed(summary, annotated, id_map), None
+
+    effective = None
+    if spec.get("reference_column"):
+        # Only Ne_iΔF has a reference subpopulation; it needs no sex, so it runs on unsexed pedigrees too.
+        es_args = ["--estimators", "ne_individual_delta_f", "--reference-col", "reference"]
+        code = run_pedsum(["effective-size", "--in", str(fixed), "--out", str(ds / "effective"), *es_args, *extra], log)
+        if code != 0:
+            return None, f"effective-size exited {code}; see {log}"
+        effective = yaml.safe_load((ds / "effective" / "effective_size.yaml").read_text())
+    return Observed(summary, annotated, id_map, effective), None
 
 
 def _fmt(x: float | None) -> str:

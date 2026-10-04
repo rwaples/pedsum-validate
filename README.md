@@ -35,7 +35,8 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 
    This step stands in for the `convert` subcommand proposed in #6.
 3. **Runs pedsum**: `pedigree_summary.py validate`, then `summarize` on the repaired
-   output (`validate.tsv.gz`). Its output goes to `.work/<name>/`, with the
+   output (`validate.tsv.gz`), and for datasets with a reference population
+   `effective-size --estimators ne_individual_delta_f --reference-col reference`. Its output goes to `.work/<name>/`, with the
    commands' output logged in `pedsum.log`.
 4. **Compares** each check in `cases.yaml` with the published value, within
    that check's tolerance.
@@ -45,7 +46,7 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 | Status | Meaning |
 |---|---|
 | PASS | pedsum's own output matches the published value. |
-| PASS (engine) | Matches, but computed by calling the `pedigree_graph` API directly, because the pedsum CLI does not report this statistic yet. The `Gap` column names the item in `docs/missing-statistics.md` that would bring it into pedsum. |
+| PASS (engine) | Matches, but computed by calling the `pedigree_graph` API directly, because the pedsum CLI does not report this statistic. None at present. |
 | DIFF | A known convention difference; the `note` column explains it. |
 | GAP | Neither pedsum nor `pedigree_graph` computes it. The published value is recorded for when it does. |
 | FAIL / ERROR | A mismatch, or a run failure. Investigate. |
@@ -59,21 +60,26 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
     families, full sibships, largest sibship, generation depth).
   - visPedigree `deep_ped`: N, founders and maximum generation, once the 3
     absent parents are added.
+  - Equivalent complete generations (`ecg` in `annotated.tsv.gz`): the atlas
+    sum (5500.627) and maximum (10.0639), and three named `deep_ped` animals.
   - The F of William Erasmus Darwin (0.06298828).
   - The F values of the Mrode example.
   - `BTped`'s structure.
-- **Ne from individual ΔF (Gutiérrez et al. 2008).** For all four purgeR
-  studbooks, `pedigree_graph` reproduces the published reference-population Ne
-  (14.01, 11.10, 3.84, 39.32) only through its `ne_unrelated_founders`
-  diagnostic. That diagnostic uses `t − 1` in the exponent, as purgeR does
-  (`purgeR/R/Ne.R:44`). The headline `ne` uses `t` and gives 15.79 for atlas.
-  pedsum's CLI cannot select a reference population yet (gap D1).
+- **Ne from individual ΔF (Gutiérrez et al. 2008).** With
+  `effective-size --reference-col`, all four purgeR studbooks reproduce the
+  published reference-population Ne (14.01, 11.10, 3.84, 39.32), but only in the
+  `ne_unrelated_founders` field. That field uses `t − 1` in the exponent, as
+  purgeR does (`purgeR/R/Ne.R:44`); the headline `ne` uses `t` and gives 15.79
+  for atlas. `effective_size.yaml` rounds to 4 decimals, so these checks use a
+  tolerance of 1e-4.
 - **Ne over all rows.** purgeR keeps rows with `t ≤ 1` and counts them as ΔF = 0,
   giving 8.18 for atlas. `pedigree_graph` drops those rows, giving 8.03 (gap D2).
 - **Missing sex blocks real pedigrees.** `validate` refuses any individual with
   unknown sex that is not a parent. That rejects dama (1 animal), arrui (1),
   dorcas (7) and deep_ped (521 rows) unless `--allow-missing-sex` is passed,
-  which this harness does for those datasets. See issue #7.
+  which this harness does for those datasets. See issue #7. `effective-size`
+  now refuses unknown sex only for the three estimators that use it, so
+  `ne_individual_delta_f` runs on these studbooks.
 - **Rounding in `summary.yaml`.** It rounds `max_F` and `mean_F` to 4 decimals.
   Exact comparisons therefore read `annotated.tsv.gz`.
 
