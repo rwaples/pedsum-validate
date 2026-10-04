@@ -200,11 +200,11 @@ Headline `summarize` statistics and all eight `effective-size` estimators, wheth
 | darwin | 63 | 24 | 1 | 7 | 0.1111 | 0.0052 | 56.5484 | 24.8298 | skipped: unknown sex | skipped: unknown sex | 25.4594 | missing_metadata:incomplete_parentage | skipped: unknown sex | 20.4205 |
 | genea140 | 41523 | 7399 | 0 | 17 | 0.1587 | 0.0015 | 828.4289 | 3472.8316 | 138.8525 | 217.4502 | 807.961 | 1265.841 | 138.8525 | 311.3693 |
 | deep_ped | 4399 | 138 | 19 | 12 | 0.6472 | 0.0251 | 534.0942 | 286.8553 | skipped: unknown sex | skipped: unknown sex | 109.9553 | missing_metadata:incomplete_parentage | skipped: unknown sex | 342.9841 |
-| mrode2 | 6 | 2 | 1 | 3 | 0.3333 | 0.0417 | 7.4889 | null, no reason (#10) | skipped: unknown sex | skipped: unknown sex | 7.2738 | missing_metadata:incomplete_parentage | skipped: unknown sex | 2.2125 |
-| btped | 1040 | 212 | 0 | 1 | 0.0 | 0.0 | null, no reason (#10) | null, no reason (#10) | skipped: unknown sex | skipped: unknown sex | null, no reason (#10) | 382.5804 | skipped: unknown sex | null, no reason (#10) |
+| mrode2 | 6 | 2 | 1 | 3 | 0.3333 | 0.0417 | 7.4889 | no_estimate:too_few_cohorts | skipped: unknown sex | skipped: unknown sex | 7.2738 | missing_metadata:incomplete_parentage | skipped: unknown sex | 2.2125 |
+| btped | 1040 | 212 | 0 | 1 | 0.0 | 0.0 | no_estimate:too_few_cohorts | no_estimate:too_few_cohorts | skipped: unknown sex | skipped: unknown sex | no_estimate:reference_not_inbred | 382.5804 | skipped: unknown sex | no_estimate:too_few_cohorts |
 | red_deer | 6048 | 1130 | 1743 | 11 | 0.2566 | 0.0059 | 853.0419 | 76.1508 | skipped: unknown sex | skipped: unknown sex | 1069.8709 | missing_metadata:incomplete_parentage | skipped: unknown sex | 35.7264 |
 | boichard2 | 20 | 6 | 0 | 2 | 0.1 | 0.025 | 9.7479 | 3.6648 | skipped: unknown sex | skipped: unknown sex | 18.6603 | 11.1111 | skipped: unknown sex | 9.3906 |
-| boichard2a | 14 | 4 | 0 | 2 | 0.0 | 0.0 | null, no reason (#10) | 1.738 | skipped: unknown sex | skipped: unknown sex | null, no reason (#10) | 8.0 | skipped: unknown sex | 11.7482 |
+| boichard2a | 14 | 4 | 0 | 2 | 0.0 | 0.0 | no_estimate:no_positive_rate | 1.738 | skipped: unknown sex | skipped: unknown sex | no_estimate:reference_not_inbred | 8.0 | skipped: unknown sex | 11.7482 |
 | boichard2b | 6 | 2 | 0 | 2 | 0.3333 | 0.0833 | 1.738 | 2.7424 | skipped: unknown sex | skipped: unknown sex | 3.7321 | 4.0 | skipped: unknown sex | 2.2407 |
 | ancien_regime | 5891 | 1660 | 89 | 11 | 0.1292 | 0.0052 | 50.0006 | 38.8485 | skipped: unknown sex | skipped: unknown sex | 27.8032 | missing_metadata:incomplete_parentage | skipped: unknown sex | 18.5761 |
 | soay_ped1 | 5068 | 478 | 2554 | 9 | 0.0237 | 0.001 | 700.9968 | 341.0 | skipped: unknown sex | skipped: unknown sex | 233.5821 | missing_metadata:incomplete_parentage | skipped: unknown sex | 10.2922 |
@@ -217,4 +217,4 @@ Headline `summarize` statistics and all eight `effective-size` estimators, wheth
 | arctic_fox | 252 | 16 | 29 | 4 | 0.3849 | 0.043 | 9.4324 | 8.9731 | skipped: unknown sex | skipped: unknown sex | 9.8599 | missing_metadata:incomplete_parentage | skipped: unknown sex | 8.9741 |
 | steelhead | 6177 | 1249 | 104 | 3 | 0.0204 | 0.0021 | 251.8541 | 186.3015 | skipped: unknown sex | skipped: unknown sex | 321.9048 | missing_metadata:incomplete_parentage | skipped: unknown sex | 170.1744 |
 | peromyscus | 11483 | 54 | 0 | 21 | 0.8908 | 0.1314 | 46.3585 | 155.2311 | 67.9976 | 369.8445 | 123.3916 | 31.4432 | 67.9976 | 155.5874 |
-| red_squirrel | 928 | 434 | 176 | 8 | 0.0312 | 0.0024 | null, no reason (#10) | 39.3332 | 5.1876 | 8.0001 | null, no reason (#10) | missing_metadata:incomplete_parentage | 5.1876 | 11.0273 |
+| red_squirrel | 928 | 434 | 176 | 8 | 0.0312 | 0.0024 | no_estimate:no_positive_rate | 39.3332 | 5.1876 | 8.0001 | no_estimate:reference_not_inbred | missing_metadata:incomplete_parentage | 5.1876 | 11.0273 |

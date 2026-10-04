@@ -79,7 +79,8 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
    non-numeric Ne cell names why there is no estimate:
    - `skipped: unknown sex`.
    - `missing_metadata:incomplete_parentage`: the pedigree has half-founders; see #9.
-   - `null, no reason (#10)`: the estimator found no positive rate; see #10.
+   - `no_estimate:<code>`: the estimator ran but found no estimate
+     (`too_few_cohorts`, `no_positive_rate`, `reference_not_inbred`, ...).
 
 ## Reading the results
 

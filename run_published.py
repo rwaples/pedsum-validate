@@ -696,10 +696,8 @@ def overview_row(name: str, obs: Observed) -> dict[str, Any]:
             row[est] = record["ne"]
         elif record.get("reason") == "not_requested":
             row[est] = "skipped: unknown sex"
-        elif record.get("reason"):
-            row[est] = ":".join(x for x in (record["reason"], record.get("code")) if x)
         else:
-            row[est] = "null, no reason (#10)"
+            row[est] = ":".join(x for x in (record.get("reason"), record.get("code")) if x)
     row["ne_individual_delta_f_unrelated_founders"] = estimates.get("ne_individual_delta_f", {}).get(
         "ne_unrelated_founders"
     )

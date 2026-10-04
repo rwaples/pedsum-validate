@@ -6,11 +6,11 @@ dorcas	1279	37	15	15	7	0.6732	0.0559	0.4717	12.6164	130.9638	102.0748	skipped: u
 darwin	63	24	1	7	1	0.1111	0.0052	0.1255	15.6106	56.5484	24.8298	skipped: unknown sex	skipped: unknown sex	25.4594	missing_metadata:incomplete_parentage	skipped: unknown sex	20.4205	19.2921
 genea140	41523	7399	0	17	2	0.1587	0.0015	0.1719	498.2688	828.4289	3472.8316	138.8525	217.4502	807.961	1265.841	138.8525	311.3693	735.7536
 deep_ped	4399	138	19	12	2	0.6472	0.0251	0.2646	41.0607	534.0942	286.8553	skipped: unknown sex	skipped: unknown sex	109.9553	missing_metadata:incomplete_parentage	skipped: unknown sex	342.9841	94.5554
-mrode2	6	2	1	3	1	0.3333	0.0417	0.125	1.9231	7.4889	null, no reason (#10)	skipped: unknown sex	skipped: unknown sex	7.2738	missing_metadata:incomplete_parentage	skipped: unknown sex	2.2125	3.5327
-btped	1040	212	0	1	106	0.0	0.0	0.0	191.2902	null, no reason (#10)	null, no reason (#10)	skipped: unknown sex	skipped: unknown sex	null, no reason (#10)	382.5804	skipped: unknown sex	null, no reason (#10)	
+mrode2	6	2	1	3	1	0.3333	0.0417	0.125	1.9231	7.4889	no_estimate:too_few_cohorts	skipped: unknown sex	skipped: unknown sex	7.2738	missing_metadata:incomplete_parentage	skipped: unknown sex	2.2125	3.5327
+btped	1040	212	0	1	106	0.0	0.0	0.0	191.2902	no_estimate:too_few_cohorts	no_estimate:too_few_cohorts	skipped: unknown sex	skipped: unknown sex	no_estimate:reference_not_inbred	382.5804	skipped: unknown sex	no_estimate:too_few_cohorts	
 red_deer	6048	1130	1743	11	983	0.2566	0.0059	0.2695	29.4137	853.0419	76.1508	skipped: unknown sex	skipped: unknown sex	1069.8709	missing_metadata:incomplete_parentage	skipped: unknown sex	35.7264	832.5975
 boichard2	20	6	0	2	2	0.1	0.025	0.25	5.8182	9.7479	3.6648	skipped: unknown sex	skipped: unknown sex	18.6603	11.1111	skipped: unknown sex	9.3906	10.0
-boichard2a	14	4	0	2	1	0.0	0.0	0.0	4.0	null, no reason (#10)	1.738	skipped: unknown sex	skipped: unknown sex	null, no reason (#10)	8.0	skipped: unknown sex	11.7482	
+boichard2a	14	4	0	2	1	0.0	0.0	0.0	4.0	no_estimate:no_positive_rate	1.738	skipped: unknown sex	skipped: unknown sex	no_estimate:reference_not_inbred	8.0	skipped: unknown sex	11.7482	
 boichard2b	6	2	0	2	1	0.3333	0.0833	0.25	2.0	1.738	2.7424	skipped: unknown sex	skipped: unknown sex	3.7321	4.0	skipped: unknown sex	2.2407	2.0
 ancien_regime	5891	1660	89	11	677	0.1292	0.0052	0.2007	74.2641	50.0006	38.8485	skipped: unknown sex	skipped: unknown sex	27.8032	missing_metadata:incomplete_parentage	skipped: unknown sex	18.5761	24.3539
 soay_ped1	5068	478	2554	9	103	0.0237	0.001	0.25	71.1214	700.9968	341.0	skipped: unknown sex	skipped: unknown sex	233.5821	missing_metadata:incomplete_parentage	skipped: unknown sex	10.2922	179.9377
@@ -23,4 +23,4 @@ seychelles_warbler	1482	214	51	10	36	0.1417	0.0106	0.375	74.2932	1042.1318	176.9
 arctic_fox	252	16	29	4	6	0.3849	0.043	0.25	4.2079	9.4324	8.9731	skipped: unknown sex	skipped: unknown sex	9.8599	missing_metadata:incomplete_parentage	skipped: unknown sex	8.9741	6.5867
 steelhead	6177	1249	104	3	965	0.0204	0.0021	0.25	92.7497	251.8541	186.3015	skipped: unknown sex	skipped: unknown sex	321.9048	missing_metadata:incomplete_parentage	skipped: unknown sex	170.1744	201.349
 peromyscus	11483	54	0	21	30	0.8908	0.1314	0.3438	15.8326	46.3585	155.2311	67.9976	369.8445	123.3916	31.4432	67.9976	155.5874	117.5339
-red_squirrel	928	434	176	8	288	0.0312	0.0024	0.25	62.5297	null, no reason (#10)	39.3332	5.1876	8.0001	null, no reason (#10)	missing_metadata:incomplete_parentage	5.1876	11.0273	
+red_squirrel	928	434	176	8	288	0.0312	0.0024	0.25	62.5297	no_estimate:no_positive_rate	39.3332	5.1876	8.0001	no_estimate:reference_not_inbred	missing_metadata:incomplete_parentage	5.1876	11.0273	
