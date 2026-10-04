@@ -53,6 +53,8 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 
 ## Findings so far
 
+[`differences.md`](differences.md) explains where the results differ from published values, and why.
+
 - **Exact matches.**
   - purgeR atlas: total F (197.2809), max F (0.4277344), F of the last row, and
     the founder count.
