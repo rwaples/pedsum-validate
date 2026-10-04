@@ -1,14 +1,65 @@
 # Published pedigrees and the values pedsum is checked against.
 #
-# Each dataset is pinned to a commit of the read-only CRAN mirror on GitHub
-# and to the file's SHA-256. Citations for every source are in
-# docs/benchmark-pedigrees.md.
+# Each dataset is pinned to a fixed URL (a commit of the read-only CRAN mirror
+# on GitHub, a Figshare file, a SourceForge release, a Kinsources export) or to
+# a Dryad file id (`dryad_file: <id>`, from `dryad.list_files(doi)`; downloads
+# need a Dryad API token, see dryad.py), and to the file's SHA-256. Citations
+# for every source are in docs/benchmark-pedigrees.md.
+#
+# Dataset keys:
+#   format                  an R `.rda` file (the default; needs `object`),
+#                           `whitespace_table`, `csv`, `tsv` (tab-separated,
+#                           keeping empty fields), `iur_txt` (Kinsources IUR
+#                           text), `xlsx` (optional `sheet`, else the first),
+#                           or `ainv_list` (a lower-triangle A-inverse list
+#                           `row column value`, from which the parents are
+#                           rebuilt by Henderson's rules; dam and sire are not
+#                           distinguished, which F does not depend on). Text
+#                           files may be gzipped; `member` reads one file from
+#                           a tar or zip archive, and `names` gives the
+#                           columns of a file without a header row.
+#   columns                 {id, mother, father, sex?}: the source columns
+#   missing_parent          tokens meaning "no parent" (R NA always does)
+#   sex_map                 source sex code -> 1 (male) or 0 (female)
+#   allow_missing_sex       pass --allow-missing-sex to validate and summarize
+#   reference_column        a 0/1 column marking the reference population;
+#                           the dataset then also runs effective-size
+#                           --reference-col
+#   parent_overrides        {id: {mother: ..., father: ...}}, null = unknown,
+#                           applied before conversion: for documented errors in
+#                           the file that validate cannot repair
+#   reference_values        {<name>: {...}}: the authors' per-individual values,
+#                           keyed by original id. Either {column: <col>}, a
+#                           column of the dataset's own source table, or a file
+#                           pinned like a dataset (`url` or `dryad_file`,
+#                           `sha256`, `member`?) with a `format` that is any
+#                           table format above (read `value_column` keyed by
+#                           `id_column`), `ainv_rdata` (ASReml-R asreml.Ainverse
+#                           triplets in .RData, `object` names the data frame)
+#                           or `ainv_list` (both F = diag(inverse of A-inverse)
+#                           - 1), or `square_matrix_diagonal` (the diagonal of
+#                           a square matrix whose first line holds the ids).
+#                           `subtract` is taken off every value (`subtract: 1`
+#                           turns an A diagonal into F). Values that are not
+#                           numbers (NA, blank, `x`) are skipped.
 #
 # A check's `via` says where the observed value comes from:
 #   summary:<dotted.path>   a scalar in pedsum's summary.yaml
-#   annotated:<sum|max|of>:<column>
-#                           an aggregate of a column of annotated.tsv.gz
-#                           (`of` reads the row whose original id is `id`)
+#   annotated:<agg>:<column>
+#                           an aggregate of a column of annotated.tsv.gz over
+#                           the check's rows: sum, max, mean, frac_gt0 (the
+#                           share of rows above 0), count (the number of rows
+#                           where the column is nonzero, or true for a boolean
+#                           column; nulls are not counted), count_gt:<x> (the
+#                           number of rows above x), or of (the row whose
+#                           original id is the check's `id`)
+#   reference:<name>:<agg>:<column>
+#                           pedsum's column against reference_values[<name>],
+#                           id by id, over the check's rows that have a
+#                           reference value: max_abs_diff, n_within (the number
+#                           with |difference| <= `match_tol`, default 1e-6),
+#                           n_compared, sum_ref or sum_pedsum (sums over the
+#                           compared rows)
 #   effective:<estimator>.<field>
 #                           a field of effective_size.yaml; datasets with a
 #                           reference_column run with --reference-col
@@ -18,8 +69,14 @@
 #   gap                     not reported by pedsum or pedigree_graph; listed so
 #                           the published value is not lost
 #
-# `status_if_differs: expected_difference` marks a known convention difference;
-# the run reports it as DIFF instead of FAIL. `tol` is an absolute tolerance.
+# Other check keys. The rows of annotated:/reference: checks can be narrowed:
+# `min_grandparents: k` keeps rows with both parents and at least k
+# grandparents known, `where: {column: value}` keeps rows equal to the value on
+# each column, and `subset: <name>` keeps rows whose id has a value in
+# reference_values[<name>]. The observed value is multiplied by `scale`, then
+# `offset` is added. `tol` is an absolute tolerance. `status_if_differs:
+# expected_difference` marks a known convention difference; the run reports it
+# as DIFF instead of FAIL. `note`, `source` and `gap` are reported as given.
 
 datasets:
   atlas:
@@ -95,6 +152,223 @@ datasets:
     missing_parent: []
     allow_missing_sex: true
 
+  red_deer:
+    # Figshare 10.6084/m9.figshare.25053941.v1 (CC BY 4.0), the pedigree of Hewett et al. 2024.
+    # The *_anon columns give a calf, a mother and a sire separate codes (C/M/D prefixes),
+    # so they do not link generations; Code/MumCode/Sire do.
+    url: https://ndownloader.figshare.com/files/44211236
+    sha256: 733b4c6b921f9732f40113f71524fbfd9642e0b80bc4ca50d716f7e67bc7d9d1
+    format: csv
+    columns: {id: Code, mother: MumCode, father: Sire}
+    missing_parent: []
+    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
+  # Boichard, Maignel & Verrier 1997, figure 2, as typed in for PyPedal's unit tests.
+  # Columns are animal, sire, dam, generation (pyp_tests.py pedformat 'asdg').
+  boichard2:
+    url: https://downloads.sourceforge.net/project/pypedal/pypedal-2.0.0/2.0.3/PyPedal-2.0.3.tar.gz
+    sha256: c2f66af3f858279f06cb72da11c8620311abca405fc5292bdc782ee12de2362a
+    member: PyPedal-2.0.3/PyPedal/tests/boichard/boichard2.ped
+    format: whitespace_table
+    names: [animal, sire, dam, gen]
+    columns: {id: animal, mother: dam, father: sire}
+    missing_parent: ["0"]
+    allow_missing_sex: true
+  boichard2a:
+    url: https://downloads.sourceforge.net/project/pypedal/pypedal-2.0.0/2.0.3/PyPedal-2.0.3.tar.gz
+    sha256: c2f66af3f858279f06cb72da11c8620311abca405fc5292bdc782ee12de2362a
+    member: PyPedal-2.0.3/PyPedal/tests/boichard/boichard2a.ped
+    format: whitespace_table
+    names: [animal, sire, dam, gen]
+    columns: {id: animal, mother: dam, father: sire}
+    missing_parent: ["0"]
+    allow_missing_sex: true
+  boichard2b:
+    url: https://downloads.sourceforge.net/project/pypedal/pypedal-2.0.0/2.0.3/PyPedal-2.0.3.tar.gz
+    sha256: c2f66af3f858279f06cb72da11c8620311abca405fc5292bdc782ee12de2362a
+    member: PyPedal-2.0.3/PyPedal/tests/boichard/boichard2b.ped
+    format: whitespace_table
+    names: [animal, sire, dam, gen]
+    columns: {id: animal, mother: dam, father: sire}
+    missing_parent: ["0"]
+    allow_missing_sex: true
+
+  ancien_regime:
+    # Kinsources dataset 53 (CC BY-NC-ND 3.0), IUR text export; statistics on the dataset page are Puck's.
+    url: https://www.kinsources.net/kidarep/download_dataset_file.xhtml?dataset_id=53&txt=on
+    sha256: 1962c673a7390000ca249eafbac16e762c561d57f34eb18e6ce04240885430f0
+    format: iur_txt
+    columns: {id: Id, mother: MotherId, father: FatherId, sex: Gender}
+    missing_parent: ["0"]
+    sex_map: {H: 1, F: 0}
+    allow_missing_sex: true  # 32 individuals with Gender X
+
+  soay_ped1:
+    # Bérénos et al. 2014, Dryad 10.5061/dryad.367s2 (CC0), pedigree1dryad.txt: Pedigree 1
+    # (field maternities, microsatellite paternities, cohorts 1985-2009). Tab-separated ID, MUMID,
+    # FATHER; NA = unknown; no sex column. The deposit README asks users to contact the project.
+    dryad_file: 100179
+    sha256: fc9fb965b91c76fd727225a4c2d280e781b6969812ed533f822957f4d3414716
+    format: whitespace_table
+    columns: {id: ID, mother: MUMID, father: FATHER}
+    missing_parent: []
+    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
+    reference_values:
+      asreml:  # inversepedigree1.RData: ASReml-R asreml.Ainverse of this pedigree
+        dryad_file: 100169
+        sha256: b0685f7d302838f2e7940dde739087be98af7d7f7e6eef24a5b187032a21079b
+        format: ainv_rdata
+        object: inversepedigree1
+  soay_ped2:
+    # As soay_ped1, pedigree2dryad.txt: Pedigree 2 (SNP parentage, cohorts 1980-2012).
+    dryad_file: 100161
+    sha256: 463ac8e7c18ceca8b88f1718a83b515b4319ffc5b7e220fabe65718082a5ce8d
+    format: whitespace_table
+    columns: {id: ID, mother: MUMID, father: FATHER}
+    missing_parent: []
+    allow_missing_sex: true
+    reference_values:
+      asreml:  # inversepedigree2.RData: ASReml-R asreml.Ainverse of this pedigree
+        dryad_file: 100170
+        sha256: 0150693518f720605078a57208c5c5672d6fd8a263f06cad2fd2a551ebef629e
+        format: ainv_rdata
+        object: inversepedigree2
+  helgeland:
+    # Niskanen et al. 2020, Dryad 10.5061/dryad.m0cfxpp10 (CC0), pedigree.txt: the Sequoia SNP
+    # pedigree, space-separated id, dam, sire; NA = unknown. 440 rows are Sequoia dummy parents
+    # (ids F0001.., M0001..); they are kept here, as the published count of 1,241 needs them.
+    dryad_file: 1952530
+    sha256: 487ba704cb51a08e6c7ffc00a4e660370a231743705aa754274853d0f635c180
+    format: whitespace_table
+    columns: {id: id, mother: dam, father: sire}
+    missing_parent: []
+    allow_missing_sex: true  # no sex column
+    reference_values:
+      genotyped:  # Data.txt: the 3,116 genotyped birds of the study. FROH is read only because
+        # every genotyped bird has one; the checks count these birds, not compare FROH with F.
+        dryad_file: 1952544
+        sha256: 0f066059f8abd26b1c09d2338d9e1bfcdf7bfd6639b15dbb7b0bc2e7d589a13a
+        format: whitespace_table
+        id_column: id
+        value_column: FROH
+  sosp_fitness:
+    # Wolak et al. 2018, Dryad 10.5061/dryad.p7p1jb3 (CC0), Wolak_et_al_SOSP_fitness_QG.zip. The
+    # deposit has no parent table: the pedigree is recovered from the fitness analysis's
+    # A-inverse (lower-triangle list) by peeling Henderson's rules; it is exact (no residual) and
+    # gives 3,062 birds, 52 without parents. Dam and sire are not identified; F does not depend on which is which.
+    dryad_file: 29887
+    sha256: 61557dd9346ca8344d257a0ae664c6b84d95d23380f07b364c4e164d104a9c02
+    member: Wolak_et_al_fitness_listAinv.txt
+    format: ainv_list
+    columns: {id: id, mother: mother, father: father}
+    missing_parent: []
+    allow_missing_sex: true
+    reference_values:
+      f_coeff:  # the authors' f for the 2,821 fitness-phenotyped birds
+        dryad_file: 29887
+        sha256: 61557dd9346ca8344d257a0ae664c6b84d95d23380f07b364c4e164d104a9c02
+        member: Wolak_et_al_fitness_Data.txt
+        format: whitespace_table
+        id_column: id
+        value_column: f_coeff
+      ainv:  # F = diag(A) - 1 from the same A-inverse
+        dryad_file: 29887
+        sha256: 61557dd9346ca8344d257a0ae664c6b84d95d23380f07b364c4e164d104a9c02
+        member: Wolak_et_al_fitness_listAinv.txt
+        format: ainv_list
+
+  black_robin:
+    # Dryad 10.5061/dryad.16g74 (CC0), DatasheetC of Kennedy et al. 2014: the full pedigree from
+    # the 1979-82 single-pair bottleneck, with each bird's F (IndividualF). The Weiser et al. 2016
+    # deposit (10.5061/dryad.81tg6, DatasetS1) holds 1104 of these birds without the 33 parents of
+    # its first cohorts; its F column equals IndividualF for all 1104.
+    dryad_file: 44580
+    sha256: 40ed89440e262e809a90d717449ccc01b7ebf6f790426d878355e0243cd9cdae
+    format: csv
+    columns: {id: IndividualID, mother: DamID, father: SireID}
+    missing_parent: []  # R NA
+    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
+    reference_values:
+      kennedy_F: {column: IndividualF}
+      weiser_F: {dryad_file: 39818, sha256: 1e14f96ea94aff5a73426670e03854ff01ee7f9e35e8fe0c4cf6bace1811f49e, format: csv, id_column: individual, value_column: F}
+  scrub_jay:
+    # Dryad 10.5061/dryad.z612jm6j0 (CC0), cr_ped_20240602.tsv: the M4 Core Region pedigree of
+    # Linderoth et al. 2025. 17 parents of translocated birds have no row; validate adds them.
+    # The authors' F is the diagonal of their nadiv makeA matrix (cr_ped_20230512_relatedness_matrix.txt).
+    dryad_file: 3900205
+    sha256: d398de81e2d3a92dabbc801f819e5ed1d0b83dea1ce1f6646529a6c3f759bd4a
+    format: whitespace_table
+    columns: {id: ID, mother: DAM_ID, father: SIRE_ID, sex: SEX}
+    missing_parent: ["*"]
+    sex_map: {MALE: 1, FEMALE: 0}
+    allow_missing_sex: true  # 273 rows with SEX "*"
+    reference_values:
+      makeA_F: {dryad_file: 3900192, sha256: 7e8080c0aadc9281810320a49900f0cef09eabb79ad1b4767e47822e9c3f4891, format: square_matrix_diagonal, subtract: 1}
+  seychelles_warbler:
+    # Dryad 10.5061/dryad.vt4b8gtr1 (CC0), Telo_h2_Pruned_Pedigree_2020.csv: the pedantics-pruned
+    # pedigree of Sparks et al. 2022 (id, mum, dad; NA = unknown; no sex column).
+    dryad_file: 2034030
+    sha256: 9a7c60c237b9351ca70d6def8d36b379abaac3884597b5ffe74f60dcba82de97
+    format: csv
+    columns: {id: id, mother: mum, father: dad}
+    missing_parent: []  # R NA
+    allow_missing_sex: true  # no sex column
+  arctic_fox:
+    # Dryad 10.5061/dryad.6g8t8 (CC0), "Submitted to Dryad.xlsx" (sheet Blad1) of Noren et al. 2016:
+    # ID, Sex (m/f/NA), F, Sire, Dam, 0 = unknown. Sires Male1-Male4 and "1" have no row.
+    dryad_file: 52765
+    sha256: 746fb379481251b58b16adf0b1b56fa61252e527e8404a78b9616f6f1e7ef75c
+    format: xlsx
+    columns: {id: ID, mother: Dam, father: Sire, sex: Sex}
+    missing_parent: ["0"]
+    sex_map: {m: 1, f: 0}
+    allow_missing_sex: true  # 1 animal with Sex NA
+    # Fox5, an adult with no birth year or litter, lists Male1 x Fox5 (her own litter's parents):
+    # an individual as its own dam, which summarize refuses. Treated as a founder.
+    parent_overrides: {Fox5: {mother: null, father: null}}
+    reference_values:
+      authors_F: {column: F}
+  # Pyrenean brown bear (Auclair et al. 2025, Dryad 10.5061/dryad.w9ghx3g1s) is not included: the
+  # deposit has no pedigree, only per-trait tables (mother per bear, father per litter) whose F
+  # includes microsatellite-corrected founder relatedness and is rounded to 4 decimals.
+
+  steelhead:
+    # Dryad 10.5061/dryad.bn249 (CC0), MEC-12-0879_DRYAD_phenotype_data.csv: one row per
+    # returning adult (6,173), with Dam/Sire from parentage analysis. Missing parent is
+    # blank (both unknown) or NA (one unknown). 4 sires (A01106, A01107, A01108, A01114)
+    # have no row; validate adds them as founders. 6 fish with blank Sex are not parents.
+    # Not checkable from this deposit (no generation column; deepest fish at depth 3):
+    #   Ne~ = 107.9 from F0 to F2, and 15.7% of F4 with Δf > 0 (Naish et al. 2013 abstract).
+    dryad_file: 20329
+    sha256: aa40eff1c69a1795b9aa2d63a847a74259be53aba0fae42ce12ce5f220738c2e
+    format: csv
+    columns: {id: Fishname, mother: Dam, father: Sire, sex: Sex}
+    missing_parent: [""]
+    sex_map: {Male: 1, Female: 0}
+    allow_missing_sex: true  # 6 fish with blank Sex, none of them parents
+  peromyscus:
+    # Dryad 10.5061/dryad.8q153 (CC0), pedigree.txt: tab-separated, CR line endings,
+    # columns ID SEX F TREATMENT GEN DAM SIRE GNAW FLIP; 0 = unknown parent. F is the
+    # authors' inbreeding coefficient to 4 decimals (one wild-caught founder has "x").
+    dryad_file: 21285
+    sha256: eca2fcd6f1ba7c0133b5601d16181ba4a58976d7f1ace4e612643d289a03a2cc
+    format: tsv
+    columns: {id: ID, mother: DAM, father: SIRE, sex: SEX}
+    missing_parent: ["0"]
+    sex_map: {m: 1, f: 0}
+    reference_values:
+      authors_F: {column: F}
+      authors_gen: {column: GEN}
+  red_squirrel:
+    # Dryad 10.5061/dryad.b064t9c5 (CC0), pedigree.csv: ID, SIRE.ID, DAM.ID, Sex (M/F), BYEAR;
+    # NA = unknown parent. No pedigree statistics found for it (Taylor et al. 2012 full text
+    # not reachable; the abstract and README give none).
+    dryad_file: 31657
+    sha256: f05d9b3b81c70746db56b1a0f4ec8e934bfcd0742ce22cc4d6b116ec1adbdfef
+    format: csv
+    columns: {id: ID, mother: DAM.ID, father: SIRE.ID, sex: Sex}
+    missing_parent: []
+    sex_map: {M: 1, F: 0}
+
 checks:
   # --- purgeR zoo studbooks --------------------------------------------------
   # purgeR tests/testthat/test_inbreeding.R and test_population_parameters.R;
@@ -161,3 +435,171 @@ checks:
   - {dataset: btped, stat: founders, published: 212, via: summary:pedigree.structure.size_structure.n_founders, source: MCMCglmm BTped.Rd}
   - {dataset: btped, stat: full-sib families, published: 106, via: summary:pedigree.demography.mating_pairs.n_pairs, source: MCMCglmm BTped.Rd}
   - {dataset: btped, stat: inbred individuals, published: 0, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "MCMCglmm BTped.Rd (parents unrelated; offspring of unrelated parents have F = 0)"}
+
+  # --- Rum red deer (Figshare ped_anon.txt) ----------------------------------
+  # Walling et al. 2011 used an older pedigree, and only calves born 1980-2010.
+  - {dataset: red_deer, stat: "share with F > 0 (both parents and >= 1 grandparent known)", published: 0.219, min_grandparents: 1, via: annotated:frac_gt0:F, status_if_differs: expected_difference, source: "Walling et al. 2011 BMC Evol Biol 11:318, Results, Levels of inbreeding (405/1848)", note: "older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file"}
+  - {dataset: red_deer, stat: "mean F (both parents and >= 1 grandparent known)", published: 0.00724, min_grandparents: 1, via: annotated:mean:F, status_if_differs: expected_difference, source: "Walling et al. 2011, Results, Levels of inbreeding", note: "older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file"}
+  - {dataset: red_deer, stat: "share with F > 0 (all four grandparents known)", published: 0.421, min_grandparents: 4, via: annotated:frac_gt0:F, status_if_differs: expected_difference, source: "Walling et al. 2011, Results, Levels of inbreeding (346/821)", note: "older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file"}
+  - {dataset: red_deer, stat: "mean F (all four grandparents known)", published: 0.0128, min_grandparents: 4, via: annotated:mean:F, status_if_differs: expected_difference, source: "Walling et al. 2011, Results, Levels of inbreeding", note: "older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file"}
+
+  # --- Boichard et al. 1997 figure 2 (PyPedal tests/boichard/*.ped) ---------
+  # Reference population: the last generation (gen 3). F values are hand-derived:
+  # only family 2's last generation (19, 20; 5, 6 in boichard2b) has full-sib parents.
+  - {dataset: boichard2, stat: N, published: 20, via: summary:n_total, source: Boichard et al. 1997 fig. 2 (p. 12)}
+  - {dataset: boichard2, stat: founders, published: 6, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
+  - {dataset: boichard2, stat: F of animal 19, id: "19", published: 0.25, tol: 1.0e-9, via: annotated:of:F, source: tabular method (hand-derived; parents are full sibs)}
+  - {dataset: boichard2, stat: sum of F, published: 0.5, tol: 1.0e-9, via: annotated:sum:F, source: tabular method (hand-derived; only 19 and 20 are inbred)}
+  - {dataset: boichard2, stat: "fe (reference = generation 3)", published: 5.6, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:121"}
+  - {dataset: boichard2, stat: "fa (reference = generation 3)", published: 2.94, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:166"}
+  - {dataset: boichard2, stat: "founder genomes Ng (reference = generation 3)", published: 2.5, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
+  - {dataset: boichard2a, stat: N, published: 14, via: summary:n_total, source: Boichard et al. 1997 fig. 2 (p. 12)}
+  - {dataset: boichard2a, stat: founders, published: 4, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
+  - {dataset: boichard2a, stat: sum of F, published: 0, tol: 1.0e-9, via: annotated:sum:F, source: tabular method (hand-derived; 5 and 6 are unrelated)}
+  - {dataset: boichard2a, stat: "fe (reference = generation 3)", published: 4.0, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:91"}
+  - {dataset: boichard2a, stat: "fa (reference = generation 3)", published: 2.0, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:136"}
+  - {dataset: boichard2a, stat: "founder genomes Ng (reference = generation 3)", published: 1.8, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
+  - {dataset: boichard2b, stat: N, published: 6, via: summary:n_total, source: Boichard et al. 1997 fig. 2 (p. 12)}
+  - {dataset: boichard2b, stat: founders, published: 2, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
+  - {dataset: boichard2b, stat: F of animal 5, id: "5", published: 0.25, tol: 1.0e-9, via: annotated:of:F, source: tabular method (hand-derived; parents are full sibs)}
+  - {dataset: boichard2b, stat: "fe (reference = generation 3)", published: 2.0, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:106"}
+  - {dataset: boichard2b, stat: "fa (reference = generation 3)", published: 2.0, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:151"}
+  - {dataset: boichard2b, stat: "founder genomes Ng (reference = generation 3)", published: 1.1, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
+
+  # --- Kinsources "Ancien Régime" (dataset 53; Puck statistics on the dataset page) ---
+  - {dataset: ancien_regime, stat: N, published: 5891, via: summary:n_total, source: "kinsources.net dataset-53-ancien-regime, Statistics"}
+  - {dataset: ancien_regime, stat: men, published: 2889, via: summary:pedigree.structure.size_structure.n_male, status_if_differs: expected_difference, note: "pedsum infers the sex of 1 X-coded father from his role; Puck counts him as unknown", source: "kinsources.net dataset 53, Statistics"}
+  - {dataset: ancien_regime, stat: women, published: 2970, via: summary:pedigree.structure.size_structure.n_female, status_if_differs: expected_difference, note: "pedsum infers the sex of 1 X-coded mother from her role", source: "kinsources.net dataset 53, Statistics"}
+  - {dataset: ancien_regime, stat: parent-child ties, published: 8373, via: summary:pedigree.structure.size_structure.n_parent_child_edges, source: "kinsources.net dataset 53, Statistics"}
+  - {dataset: ancien_regime, stat: depth, published: 11, via: summary:pedigree.structure.size_structure.max_depth, source: "kinsources.net dataset 53, Statistics"}
+  - {dataset: ancien_regime, stat: mean depth, published: 2.36, tol: 0.005, via: summary:pedigree.structure.size_structure.mean_depth, status_if_differs: expected_difference, note: "Puck does not define this mean; pedsum averages maximum generations traced (founders 0). The maxima agree (11)", source: "kinsources.net dataset 53, Statistics"}
+  - {dataset: ancien_regime, stat: components, published: 5, via: summary:pedigree.structure.size_structure.n_components, status_if_differs: expected_difference, note: "Puck also joins spouses; with union ties added this file has 5 components (1 plus 4 singletons). pedsum joins parent-child ties only", source: "kinsources.net dataset 53, Statistics"}
+
+  # --- Soay sheep, Bérénos et al. 2014 Mol Ecol 23:3434, Table 2 (pedantics pedigreeStats) ---
+  # pedantics counts sib pairs: "maternal half-sibs" are all pairs sharing a dam minus full-sib
+  # pairs. pedsum labels each pair once, so a dam-sharing pair in which one is the other's sire is
+  # FO, not MHS (2 such pairs in Pedigree 1, 1 in Pedigree 2; sire-sharing: 4 and 18).
+  - {dataset: soay_ped1, stat: records, published: 5068, via: summary:n_total, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: maternities, published: 4373, via: summary:pedigree.structure.size_structure.n_mother_links, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: paternities, published: 2253, via: summary:pedigree.structure.size_structure.n_father_links, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: full-sib pairs, published: 129, via: summary:pedigree.relatedness.relationship_pairs.FS, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: maternal half-sib pairs, published: 13367, via: summary:pedigree.relatedness.relationship_pairs.MHS, status_if_differs: expected_difference, note: "pedantics counts every dam-sharing pair that is not full-sib; pedsum labels the 2 pairs in which one is also the other's sire as FO", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: paternal half-sib pairs, published: 13451, via: summary:pedigree.relatedness.relationship_pairs.PHS, status_if_differs: expected_difference, note: "pedantics counts every sire-sharing pair that is not full-sib; pedsum labels the 4 pairs in which one is also the other's dam as MO", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: known grandparents (sum of the 4 grandparent rows), published: 7110, via: annotated:sum:n_grandparents, source: "Bérénos et al. 2014, Table 2 (3122 + 1893 + 1149 + 946)"}
+  - {dataset: soay_ped1, stat: maximum pedigree depth, published: 9, via: summary:pedigree.structure.size_structure.max_depth, source: "Bérénos et al. 2014, Table 2 (pedantics uses kinship2::kindepth, founders 0)"}
+  - {dataset: soay_ped1, stat: founders, published: 478, via: summary:pedigree.structure.size_structure.n_founders, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: nonzero F, published: 120, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: mean pairwise relatedness, published: 0.00295, via: gap, gap: C1, note: "pedantics averages 2x kinship over all pairs, binned at 0.025", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: records, published: 6740, via: summary:n_total, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: maternities, published: 5981, via: summary:pedigree.structure.size_structure.n_mother_links, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: paternities, published: 4593, via: summary:pedigree.structure.size_structure.n_father_links, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: full-sib pairs, published: 349, via: summary:pedigree.relatedness.relationship_pairs.FS, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: maternal half-sib pairs, published: 19564, via: summary:pedigree.relatedness.relationship_pairs.MHS, status_if_differs: expected_difference, note: "pedantics counts every dam-sharing pair that is not full-sib; pedsum labels the 1 pair in which one is also the other's sire as FO", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: paternal half-sib pairs, published: 48138, via: summary:pedigree.relatedness.relationship_pairs.PHS, status_if_differs: expected_difference, note: "pedantics counts every sire-sharing pair that is not full-sib; pedsum labels the 18 pairs in which one is also the other's dam as MO", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: known grandparents (sum of the 4 grandparent rows), published: 14599, via: annotated:sum:n_grandparents, source: "Bérénos et al. 2014, Table 2 (4917 + 4031 + 2734 + 2917)"}
+  - {dataset: soay_ped2, stat: maximum pedigree depth, published: 10, via: summary:pedigree.structure.size_structure.max_depth, source: "Bérénos et al. 2014, Table 2 (founders 0)"}
+  - {dataset: soay_ped2, stat: founders, published: 404, via: summary:pedigree.structure.size_structure.n_founders, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: nonzero F, published: 813, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: mean pairwise relatedness, published: 0.00587, via: gap, gap: C1, note: "pedantics averages 2x kinship over all pairs, binned at 0.025", source: "Bérénos et al. 2014, Table 2"}
+
+  - {dataset: soay_ped1, stat: individuals with F > 0.125, published: 8, via: "annotated:count_gt:0.125:F", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: mean maternal sibship size (offspring per dam), published: 4.579, tol: 5.0e-4, where: {sex: 0}, via: annotated:mean:n_offspring, source: "Bérénos et al. 2014, Table 2 (no sex column: the females are the dams)"}
+  - {dataset: soay_ped1, stat: mean paternal sibship size (offspring per sire), published: 4.308, tol: 5.0e-4, where: {sex: 1}, via: annotated:mean:n_offspring, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped1, stat: "max |F - ASReml F| (all 5,068)", published: 0, tol: 1.0e-9, via: reference:asreml:max_abs_diff:F, source: "deposit inversepedigree1.RData (asreml.Ainverse of Pedigree 1); F = diag(A) - 1, deterministic recomputation"}
+  - {dataset: soay_ped2, stat: individuals with F > 0.125, published: 27, via: "annotated:count_gt:0.125:F", source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: mean maternal sibship size (offspring per dam), published: 4.528, tol: 5.0e-4, where: {sex: 0}, via: annotated:mean:n_offspring, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: mean paternal sibship size (offspring per sire), published: 6.309, tol: 5.0e-4, where: {sex: 1}, via: annotated:mean:n_offspring, source: "Bérénos et al. 2014, Table 2"}
+  - {dataset: soay_ped2, stat: "max |F - ASReml F| (all 6,740)", published: 0, tol: 1.0e-9, via: reference:asreml:max_abs_diff:F, source: "deposit inversepedigree2.RData (asreml.Ainverse of Pedigree 2); F = diag(A) - 1, deterministic recomputation"}
+
+  # --- Helgeland house sparrow, Niskanen et al. 2020 PNAS 117:14584 ---
+  - {dataset: helgeland, stat: genotyped birds in the pedigree, published: 3116, via: reference:genotyped:n_compared:F, source: "Niskanen et al. 2020, Methods: pedigree 'constructed for 3,116 adult house sparrows'"}
+  - {dataset: helgeland, stat: "genotyped birds with at least two full ancestral generations (4 grandparents known)", published: 1241, min_grandparents: 4, via: reference:genotyped:n_compared:F, source: "Niskanen et al. 2020, Methods: 'reduced the sample size to 1,241 individuals'", note: "Sequoia dummy parents kept; the deposited Estimating_pedigree_F.R removes them first, which gives 490"}
+
+  # --- Mandarte song sparrow, Wolak et al. 2018 Evolution 72:2057, Results ---
+  - {dataset: sosp_fitness, stat: fitness-phenotyped birds, published: 2821, via: reference:f_coeff:n_compared:F, source: "Wolak et al. 2018, Results: 'Across the 2821 individuals'"}
+  - {dataset: sosp_fitness, stat: "mean f, 2821 phenotyped birds", published: 0.074, tol: 5.0e-4, subset: f_coeff, via: annotated:mean:F, status_if_differs: expected_difference, note: "the A-inverse pedigree gives one ancestor parents that the f pedigree lacks; the deposit's own f_coeff averages 0.0758", source: "Wolak et al. 2018, Results ('mean f was 0.074 ± 0.052')"}
+  - {dataset: sosp_fitness, stat: "max f, 2821 phenotyped birds", published: 0.347, tol: 5.0e-4, subset: f_coeff, via: annotated:max:F, status_if_differs: expected_difference, note: "deposit f_coeff max is 0.357; see mean f", source: "Wolak et al. 2018, Results ('range 0.000–0.347')"}
+  - {dataset: sosp_fitness, stat: "share with f > 0, 2821 phenotyped birds", published: 0.926, tol: 5.0e-4, subset: f_coeff, via: annotated:frac_gt0:F, status_if_differs: expected_difference, note: "deposit f_coeff has 7.48% zeros; see mean f", source: "Wolak et al. 2018, Results ('7.4% zeroes', so 92.6% above 0)"}
+  - {dataset: sosp_fitness, stat: mean immigrant genetic group coefficient, published: 0.52, via: gap, gap: D5, source: "Wolak et al. 2018, Results ('mean IGG coefficient was 0.52 ± 0.13SD')"}
+  - {dataset: sosp_fitness, stat: "birds whose F matches deposit f_coeff (|ΔF| <= 1e-6)", published: 2821, via: reference:f_coeff:n_within:F, status_if_differs: expected_difference, note: "the other 938 differ (pedsum higher, by up to 0.088); all 2821 match once A-inverse row 173 (not phenotyped, 21 offspring) is given no parents", source: "deposit Wolak_et_al_fitness_Data.txt, f_coeff"}
+  - {dataset: sosp_fitness, stat: "max |F - F from deposit A-inverse| (all 3,062)", published: 0, tol: 1.0e-9, via: reference:ainv:max_abs_diff:F, source: "deposit Wolak_et_al_fitness_listAinv.txt; F = diag(A) - 1, deterministic recomputation (the pedigree was recovered from the same matrix)"}
+
+  # --- Chatham Island black robin (Kennedy et al. 2014 DatasheetC) -----------
+  - {dataset: black_robin, stat: N, published: 1348, via: summary:n_total, source: "Kennedy et al. 2014, Dryad 10.5061/dryad.16g74, DatasheetC (1348 rows)"}
+  - {dataset: black_robin, stat: "founders (Weiser: the two birds of the single-pair bottleneck)", published: 2, via: summary:pedigree.structure.size_structure.n_founders, status_if_differs: expected_difference, note: "Weiser counts the bottleneck pair as founders; the male's ancestry to his grandparents is in the file, so it has 6 rows with no known parent", source: "Weiser 2014 PhD thesis (Otago, hdl 10523/4852), ch. 5 Methods, 'Dataset and pedigree' (PDF p. 76)"}
+  - {dataset: black_robin, stat: sum of F (authors' IndividualF), published: 459.6190968, tol: 1.0e-6, via: annotated:sum:F, source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (sum)"}
+  - {dataset: black_robin, stat: max F (authors' IndividualF), published: 0.654296875, tol: 1.0e-9, via: annotated:max:F, source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (max)"}
+  - {dataset: black_robin, stat: "max F ('ranged from 0.25 ... to 0.65')", published: 0.65, tol: 0.005, via: annotated:max:F, source: "Weiser 2014 PhD thesis, ch. 5 Results (PDF p. 82); the chapter is published as Weiser et al. 2016 Evolution 70:154-166"}
+  - {dataset: black_robin, stat: "max |ΔF| vs authors' IndividualF (1348 birds)", published: 0, tol: 1.0e-6, via: "reference:kennedy_F:max_abs_diff:F", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
+  - {dataset: black_robin, stat: "birds with F within 1e-6 of IndividualF", published: 1348, via: "reference:kennedy_F:n_within:F", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
+  - {dataset: black_robin, stat: "birds with F within 1e-6 of Weiser et al. DatasetS1 F", published: 1104, via: "reference:weiser_F:n_within:F", source: "Weiser et al. 2016, Dryad 10.5061/dryad.81tg6, DatasetS1, F column (1104 birds)"}
+  - {dataset: black_robin, stat: "max |ΔF| vs Weiser et al. DatasetS1 F", published: 0, tol: 1.0e-6, via: "reference:weiser_F:max_abs_diff:F", source: "Weiser et al. 2016, Dryad DatasetS1, F column"}
+
+  # --- Florida scrub-jay (Linderoth et al. 2025) -------------------------------
+  # The authors' A matrix was built with nadiv 2.17.2, whose makeA() mis-ordered the
+  # Mendelian sampling variances (fixed in nadiv 2.18.0); see differences.md.
+  - {dataset: scrub_jay, stat: "N (Core Region pedigree rows)", published: 678, via: summary:n_total, status_if_differs: expected_difference, note: "validate adds the 17 parents of translocated birds that have no row (nadiv's prepPed adds the same 17; the deposited matrix drops them)", source: "Linderoth et al. 2025, Dryad 10.5061/dryad.z612jm6j0, cr_ped_20240602.tsv (678 rows)"}
+  - {dataset: scrub_jay, stat: "founding ancestors (resident + translocated)", published: 74, via: summary:pedigree.structure.size_structure.n_founders, status_if_differs: expected_difference, note: "the paper's ancestors are the residents and translocated birds (ANCESTOR = 1); 39 of them have known parents in donor sites. pedsum counts rows with no known parent (89 + 17 added)", source: "Linderoth et al. 2025 Curr Biol, Results and Figure 2 ('the 74 CR population ancestors'); Dryad cr_ancestors_20240602.tsv"}
+  - {dataset: scrub_jay, stat: "max F (diag of authors' makeA − 1)", published: 0.25, tol: 1.0e-9, via: annotated:max:F, source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt (nadiv makeA)"}
+  - {dataset: scrub_jay, stat: "sum of F over the 678 birds (diag of makeA − 1)", published: 10.62646484, tol: 1.0e-6, via: "reference:makeA_F:sum_pedsum:F", status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug (wrong dii order, fixed in 2.18.0); an independent tabular A on this pedigree gives 8.69677734, as pedsum does", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
+  - {dataset: scrub_jay, stat: "birds with F within 1e-6 of the makeA diagonal", published: 678, via: "reference:makeA_F:n_within:F", status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug; 23 diagonal entries are below 1 (F < 0), impossible for a valid A", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
+  - {dataset: scrub_jay, stat: "max |ΔF| vs the makeA diagonal", published: 0, tol: 1.0e-6, via: "reference:makeA_F:max_abs_diff:F", status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
+  - {dataset: scrub_jay, stat: "inbred birds (makeA diagonal > 1)", published: 222, via: summary:pedigree.relatedness.inbreeding.n_inbred, status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug; the correct A gives 126", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
+  - {dataset: scrub_jay, stat: "share of founder ancestry from RLS-K + WSA-K, 2017 population", published: 0.32, via: gap, gap: B1, source: "Linderoth et al. 2025, Results ('a maximum contribution of 32% in 2017'); Dryad T_IE_20230512_2017_pop_contribution.pedstat1 gives 0.3223"}
+  - {dataset: scrub_jay, stat: "mean share from RLS-K + WSA-K, 2008-2022", published: 0.24, via: gap, gap: B1, source: "Linderoth et al. 2025, Results ('24% (SD = 0.06) of the expected CR population founder ancestry'); the deposited pedstat1 files give 0.2379 (SD 0.0645)"}
+  - {dataset: scrub_jay, stat: "founders contributing to the 2022 cohort", published: 24, via: gap, gap: B1, source: "Linderoth et al. 2025, Dryad number_contributing_lineages_to_cohorts_cr_ped_20230512.tsv"}
+
+  # --- Seychelles warbler (Sparks et al. 2022; pedantics pedigreeStats, Table S3, pruned pedigree) ---
+  - {dataset: seychelles_warbler, stat: records, published: 1482, via: summary:n_total, source: "Sparks et al. 2022 Mol Ecol 31:6324, §2.3, Genetic pedigree; preprint SI Table S3 (EcoEvoRxiv 10.32942/osf.io/eq2af)"}
+  - {dataset: seychelles_warbler, stat: offspring (at least one parent known), published: 1268, via: summary:pedigree.structure.size_structure.n_nonfounders, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: maternities, published: 1217, via: summary:pedigree.structure.size_structure.n_mother_links, source: "Sparks et al. 2022, §2.3, Genetic pedigree; SI Table S3"}
+  - {dataset: seychelles_warbler, stat: paternities, published: 1268, via: summary:pedigree.structure.size_structure.n_father_links, source: "Sparks et al. 2022, §2.3, Genetic pedigree; SI Table S3"}
+  - {dataset: seychelles_warbler, stat: mothers, published: 391, via: summary:pedigree.structure.size_structure.n_female, note: "no sex column; validate sexes each parent by role, so females are the mothers", source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: fathers, published: 367, via: summary:pedigree.structure.size_structure.n_male, note: "no sex column; males are the fathers", source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: full-sib pairs, published: 696, via: summary:pedigree.relatedness.relationship_pairs.FS, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: "maternal half-sib pairs (from per-individual counts)", published: 1669, via: annotated:sum:n_mat_half_sibs, scale: 0.5, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: "maternal half-sib pairs (relationship_pairs.MHS)", published: 1669, via: summary:pedigree.relatedness.relationship_pairs.MHS, status_if_differs: expected_difference, note: "relationship_pairs keeps each pair's closest relationship; 14 maternal half-sib pairs are also parent-offspring", source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: "paternal half-sib pairs (from per-individual counts)", published: 2454, via: annotated:sum:n_pat_half_sibs, scale: 0.5, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: "paternal half-sib pairs (relationship_pairs.PHS)", published: 2454, via: summary:pedigree.relatedness.relationship_pairs.PHS, status_if_differs: expected_difference, note: "relationship_pairs keeps each pair's closest relationship; 19 paternal half-sib pairs are also parent-offspring", source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: "grandparent links (860 + 913 + 891 + 975)", published: 3639, via: annotated:sum:n_grandparents, source: "Sparks et al. preprint SI Table S3 (maternal and paternal grandmothers and grandfathers)"}
+  - {dataset: seychelles_warbler, stat: maximum pedigree depth (baseline generation 0), published: 10, via: summary:pedigree.structure.size_structure.max_depth, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: founders, published: 214, via: summary:pedigree.structure.size_structure.n_founders, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: non-zero F, published: 210, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: F > 0.125, published: 41, via: "annotated:count_gt:0.125:F", source: "Sparks et al. preprint SI Table S3"}
+  - {dataset: seychelles_warbler, stat: mean pairwise relatedness, published: 0.011, via: gap, gap: C1, source: "Sparks et al. preprint SI Table S3"}
+
+  # --- Scandinavian arctic fox (Noren et al. 2016) ------------------------------
+  # The paper is closed access; only the abstract (PubMed 27135988) was read.
+  - {dataset: arctic_fox, stat: individuals, published: 205, via: summary:n_total, status_if_differs: expected_difference, note: "the sheet has 247 rows (240 pups with a litter id, 7 adults); validate adds 5 sires with no row (Male1-Male4 and '1')", source: "Noren et al. 2016 Mol Ecol 25:3309, abstract ('33 litters with a total of 205 individuals')"}
+  - {dataset: arctic_fox, stat: founders, published: 5, via: summary:pedigree.structure.size_structure.n_founders, status_if_differs: expected_difference, note: "the authors' pedigree knew the ancestry of the sires Male1-Male4 and of some sires coded 0; the sheet does not", source: "Noren et al. 2016, abstract ('founded by only five individuals')"}
+  - {dataset: arctic_fox, stat: "animals with F within 1e-6 of the sheet's F", published: 247, via: "reference:authors_F:n_within:F", status_if_differs: expected_difference, note: "40 animals descend from sires whose ancestry is not in the sheet (e.g. Male3 x Fox20 offspring: F 0.125 in the sheet, 0 from its parentage); 4 have F > 0 with a parent coded 0", source: "Noren et al. 2016, Dryad 10.5061/dryad.6g8t8, F column"}
+  - {dataset: arctic_fox, stat: "max |ΔF| vs the sheet's F", published: 0, tol: 1.0e-6, via: "reference:authors_F:max_abs_diff:F", status_if_differs: expected_difference, note: "parentage missing from the sheet (see above)", source: "Noren et al. 2016, Dryad, F column"}
+  - {dataset: arctic_fox, stat: "sum of F (sheet's F column)", published: 13.53125, tol: 1.0e-6, via: "reference:authors_F:sum_pedsum:F", status_if_differs: expected_difference, note: "parentage missing from the sheet (see above)", source: "Noren et al. 2016, Dryad, F column (sum)"}
+
+  # --- Steelhead, Forks Creek hatchery (Naish et al. 2013; Dryad bn249) ------
+  - {dataset: steelhead, stat: "N (abstract: 6,602 fish)", published: 6602, via: summary:n_total, status_if_differs: expected_difference, source: "Naish et al. 2013 Mol Ecol 22:1295, abstract (PubMed 23379933)", note: "the Dryad file has 6,173 fish rows, plus 4 sires without rows that validate adds (6,177); the paper's other 429 fish are not in the deposit"}
+  - {dataset: steelhead, stat: "N (deposit rows + 4 sires without rows)", published: 6177, via: summary:n_total, source: "Dryad file 20329 (6,173 rows; sires A01106, A01107, A01108, A01114 have no row)"}
+  - {dataset: steelhead, stat: founders (both parents unknown), published: 1249, via: summary:pedigree.structure.size_structure.n_founders, source: "Dryad file 20329 (1,245 rows with blank Dam and Sire, plus the 4 added sires)"}
+  - {dataset: steelhead, stat: half-founders (one parent NA), published: 104, via: summary:pedigree.structure.size_structure.n_half_founders, source: "Dryad file 20329 (78 rows with Dam NA, 26 with Sire NA)"}
+  - {dataset: steelhead, stat: "deepest generation (abstract names F4; founders F0)", published: 4, via: summary:pedigree.structure.size_structure.max_depth, status_if_differs: expected_difference, source: "Naish et al. 2013, abstract ('in F4, percentage individuals with inbreeding coefficients Δf > 0 = 15.7%')", note: "the deposit's deepest fish are at depth 3, so it holds no F4 fish (or the paper numbers generations from a different base); full text not reachable to check"}
+  - {dataset: steelhead, stat: sum of F, published: 12.84375, tol: 1.0e-9, via: annotated:sum:F, source: "independent tabular-method recomputation on Dryad file 20329 (deterministic; not a published value)"}
+  - {dataset: steelhead, stat: inbred individuals, published: 126, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "independent tabular-method recomputation on Dryad file 20329 (deterministic; not a published value)"}
+
+  # --- Brookfield Zoo Peromyscus leucopus (Willoughby et al. 2015; Dryad 8q153) ---
+  # The authors' F and GEN are columns of the deposit, so pedsum is compared row by row.
+  - {dataset: peromyscus, stat: N, published: 11483, via: summary:n_total, source: "Dryad file 21285 (11,483 rows)"}
+  - {dataset: peromyscus, stat: founders (TREATMENT WildCaught or WildSire), published: 54, via: summary:pedigree.structure.size_structure.n_founders, source: "Dryad file 21285 (51 WildCaught + 3 WildSire, the only rows with DAM = SIRE = 0)"}
+  - {dataset: peromyscus, stat: "maximum generation (deposit GEN; abstract: propagated for 20 generations)", published: 21, via: summary:pedigree.structure.size_structure.max_depth, source: "Dryad file 21285, GEN column (0-21; GEN 20-21 include the inter-line crosses RanX/SSPx); Willoughby et al. 2015 abstract"}
+  - {dataset: peromyscus, stat: "max abs(pedsum depth - authors' GEN)", published: 0, via: "reference:authors_gen:max_abs_diff:ped_depth", source: "Dryad file 21285, GEN column"}
+  - {dataset: peromyscus, stat: "rows with an authors' F (one is 'x')", published: 11482, via: "reference:authors_F:n_compared:F", source: "Dryad file 21285, F column"}
+  - {dataset: peromyscus, stat: "max abs(pedsum F - authors' F)", published: 0, tol: 1.0e-4, via: "reference:authors_F:max_abs_diff:F", status_if_differs: expected_difference, source: "Dryad file 21285, F column (4 decimals)", note: "the authors' F is truncated to 4 decimals and comes from a slightly different pedigree: exact through GEN 4, then pedsum is higher by about 3e-4 by GEN 20 in every line, and 3 families (23 rows; 8415-8417, 14075, 15290 sibships) differ by up to 0.224. pedsum equals an independent recursion on the deposited DAM/SIRE for every row"}
+  - {dataset: peromyscus, stat: "rows with abs(pedsum F - authors' F) <= 1e-6", published: 11482, match_tol: 1.0e-6, via: "reference:authors_F:n_within:F", status_if_differs: expected_difference, source: "Dryad file 21285, F column", note: "as above; exact agreement only where the true F has at most 4 decimals"}
+  - {dataset: peromyscus, stat: "rows with abs(pedsum F - authors' F) <= 1e-4 (4-decimal truncation)", published: 11482, match_tol: 1.0e-4, via: "reference:authors_F:n_within:F", status_if_differs: expected_difference, source: "Dryad file 21285, F column", note: "as above"}
+  - {dataset: peromyscus, stat: "sum of F over the rows with an authors' F", published: 1504.9558, tol: 1.0e-4, via: "reference:authors_F:sum_pedsum:F", status_if_differs: expected_difference, source: "Dryad file 21285, F column summed (1504.9558)", note: "as above; pedsum's sum is 0.22% higher"}
+
+  # --- Kluane red squirrel (Taylor et al. 2012; Dryad b064t9c5) --------------
+  - {dataset: red_squirrel, stat: N, published: 928, via: summary:n_total, source: "Dryad file 31657 (928 rows)"}
+  - {dataset: red_squirrel, stat: founders (both parents NA), published: 434, via: summary:pedigree.structure.size_structure.n_founders, source: "Dryad file 31657"}
+  - {dataset: red_squirrel, stat: half-founders (one parent NA), published: 176, via: summary:pedigree.structure.size_structure.n_half_founders, source: "Dryad file 31657 (160 with dam only, 16 with sire only)"}
+  - {dataset: red_squirrel, stat: sum of F, published: 2.222900390625, tol: 1.0e-9, via: annotated:sum:F, source: "independent tabular-method recomputation on Dryad file 31657 (deterministic; not a published value)"}
+  - {dataset: red_squirrel, stat: inbred individuals, published: 29, via: summary:pedigree.relatedness.inbreeding.n_inbred, source: "independent tabular-method recomputation on Dryad file 31657 (deterministic; not a published value)"}

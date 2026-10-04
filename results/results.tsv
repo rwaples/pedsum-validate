@@ -48,3 +48,134 @@ btped	N	1040	1040	PASS	summary:n_total		MCMCglmm BTped.Rd
 btped	founders	212	212	PASS	summary:pedigree.structure.size_structure.n_founders		MCMCglmm BTped.Rd	
 btped	full-sib families	106	106	PASS	summary:pedigree.demography.mating_pairs.n_pairs		MCMCglmm BTped.Rd	
 btped	inbred individuals	0	0	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		MCMCglmm BTped.Rd (parents unrelated; offspring of unrelated parents have F = 0)	
+red_deer	share with F > 0 (both parents and >= 1 grandparent known)	0.219	0.5017782	DIFF	annotated:frac_gt0:F		Walling et al. 2011 BMC Evol Biol 11:318, Results, Levels of inbreeding (405/1848)	older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file
+red_deer	mean F (both parents and >= 1 grandparent known)	0.00724	0.01150534	DIFF	annotated:mean:F		Walling et al. 2011, Results, Levels of inbreeding	older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file
+red_deer	share with F > 0 (all four grandparents known)	0.421	0.7049973	DIFF	annotated:frac_gt0:F		Walling et al. 2011, Results, Levels of inbreeding (346/821)	older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file
+red_deer	mean F (all four grandparents known)	0.0128	0.01604974	DIFF	annotated:mean:F		Walling et al. 2011, Results, Levels of inbreeding	older pedigree (Walling 2011) and only calves born 1980-2010; pedsum F equals an independent tabular-method recomputation on this file
+boichard2	N	20	20	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)	
+boichard2	founders	6	6	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
+boichard2	F of animal 19	0.25	0.25	PASS	annotated:of:F		tabular method (hand-derived; parents are full sibs)	
+boichard2	sum of F	0.5	0.5	PASS	annotated:sum:F		tabular method (hand-derived; only 19 and 20 are inbred)	
+boichard2	fe (reference = generation 3)	5.6		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:121	
+boichard2	fa (reference = generation 3)	2.94		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:166	
+boichard2	founder genomes Ng (reference = generation 3)	2.5		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
+boichard2a	N	14	14	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)	
+boichard2a	founders	4	4	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
+boichard2a	sum of F	0	0	PASS	annotated:sum:F		tabular method (hand-derived; 5 and 6 are unrelated)	
+boichard2a	fe (reference = generation 3)	4		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:91	
+boichard2a	fa (reference = generation 3)	2		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:136	
+boichard2a	founder genomes Ng (reference = generation 3)	1.8		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
+boichard2b	N	6	6	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)	
+boichard2b	founders	2	2	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
+boichard2b	F of animal 5	0.25	0.25	PASS	annotated:of:F		tabular method (hand-derived; parents are full sibs)	
+boichard2b	fe (reference = generation 3)	2		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:106	
+boichard2b	fa (reference = generation 3)	2		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:151	
+boichard2b	founder genomes Ng (reference = generation 3)	1.1		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
+ancien_regime	N	5891	5891	PASS	summary:n_total		kinsources.net dataset-53-ancien-regime, Statistics	
+ancien_regime	men	2889	2890	DIFF	summary:pedigree.structure.size_structure.n_male		kinsources.net dataset 53, Statistics	pedsum infers the sex of 1 X-coded father from his role; Puck counts him as unknown
+ancien_regime	women	2970	2971	DIFF	summary:pedigree.structure.size_structure.n_female		kinsources.net dataset 53, Statistics	pedsum infers the sex of 1 X-coded mother from her role
+ancien_regime	parent-child ties	8373	8373	PASS	summary:pedigree.structure.size_structure.n_parent_child_edges		kinsources.net dataset 53, Statistics	
+ancien_regime	depth	11	11	PASS	summary:pedigree.structure.size_structure.max_depth		kinsources.net dataset 53, Statistics	
+ancien_regime	mean depth	2.36	2.9355	DIFF	summary:pedigree.structure.size_structure.mean_depth		kinsources.net dataset 53, Statistics	Puck does not define this mean; pedsum averages maximum generations traced (founders 0). The maxima agree (11)
+ancien_regime	components	5	677	DIFF	summary:pedigree.structure.size_structure.n_components		kinsources.net dataset 53, Statistics	Puck also joins spouses; with union ties added this file has 5 components (1 plus 4 singletons). pedsum joins parent-child ties only
+soay_ped1	records	5068	5068	PASS	summary:n_total		Bérénos et al. 2014, Table 2	
+soay_ped1	maternities	4373	4373	PASS	summary:pedigree.structure.size_structure.n_mother_links		Bérénos et al. 2014, Table 2	
+soay_ped1	paternities	2253	2253	PASS	summary:pedigree.structure.size_structure.n_father_links		Bérénos et al. 2014, Table 2	
+soay_ped1	full-sib pairs	129	129	PASS	summary:pedigree.relatedness.relationship_pairs.FS		Bérénos et al. 2014, Table 2	
+soay_ped1	maternal half-sib pairs	13367	13365	DIFF	summary:pedigree.relatedness.relationship_pairs.MHS		Bérénos et al. 2014, Table 2	pedantics counts every dam-sharing pair that is not full-sib; pedsum labels the 2 pairs in which one is also the other's sire as FO
+soay_ped1	paternal half-sib pairs	13451	13447	DIFF	summary:pedigree.relatedness.relationship_pairs.PHS		Bérénos et al. 2014, Table 2	pedantics counts every sire-sharing pair that is not full-sib; pedsum labels the 4 pairs in which one is also the other's dam as MO
+soay_ped1	known grandparents (sum of the 4 grandparent rows)	7110	7110	PASS	annotated:sum:n_grandparents		Bérénos et al. 2014, Table 2 (3122 + 1893 + 1149 + 946)	
+soay_ped1	maximum pedigree depth	9	9	PASS	summary:pedigree.structure.size_structure.max_depth		Bérénos et al. 2014, Table 2 (pedantics uses kinship2::kindepth, founders 0)	
+soay_ped1	founders	478	478	PASS	summary:pedigree.structure.size_structure.n_founders		Bérénos et al. 2014, Table 2	
+soay_ped1	nonzero F	120	120	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		Bérénos et al. 2014, Table 2	
+soay_ped1	mean pairwise relatedness	0.00295		GAP	gap	C1	Bérénos et al. 2014, Table 2	pedantics averages 2x kinship over all pairs, binned at 0.025
+soay_ped1	individuals with F > 0.125	8	8	PASS	annotated:count_gt:0.125:F		Bérénos et al. 2014, Table 2	
+soay_ped1	mean maternal sibship size (offspring per dam)	4.579	4.579058	PASS	annotated:mean:n_offspring		Bérénos et al. 2014, Table 2 (no sex column: the females are the dams)	
+soay_ped1	mean paternal sibship size (offspring per sire)	4.308	4.307839	PASS	annotated:mean:n_offspring		Bérénos et al. 2014, Table 2	
+soay_ped1	max |F - ASReml F| (all 5,068)	0	8.881784e-15	PASS	reference:asreml:max_abs_diff:F		deposit inversepedigree1.RData (asreml.Ainverse of Pedigree 1); F = diag(A) - 1, deterministic recomputation	
+soay_ped2	records	6740	6740	PASS	summary:n_total		Bérénos et al. 2014, Table 2	
+soay_ped2	maternities	5981	5981	PASS	summary:pedigree.structure.size_structure.n_mother_links		Bérénos et al. 2014, Table 2	
+soay_ped2	paternities	4593	4593	PASS	summary:pedigree.structure.size_structure.n_father_links		Bérénos et al. 2014, Table 2	
+soay_ped2	full-sib pairs	349	349	PASS	summary:pedigree.relatedness.relationship_pairs.FS		Bérénos et al. 2014, Table 2	
+soay_ped2	maternal half-sib pairs	19564	19563	DIFF	summary:pedigree.relatedness.relationship_pairs.MHS		Bérénos et al. 2014, Table 2	pedantics counts every dam-sharing pair that is not full-sib; pedsum labels the 1 pair in which one is also the other's sire as FO
+soay_ped2	paternal half-sib pairs	48138	48120	DIFF	summary:pedigree.relatedness.relationship_pairs.PHS		Bérénos et al. 2014, Table 2	pedantics counts every sire-sharing pair that is not full-sib; pedsum labels the 18 pairs in which one is also the other's dam as MO
+soay_ped2	known grandparents (sum of the 4 grandparent rows)	14599	14599	PASS	annotated:sum:n_grandparents		Bérénos et al. 2014, Table 2 (4917 + 4031 + 2734 + 2917)	
+soay_ped2	maximum pedigree depth	10	10	PASS	summary:pedigree.structure.size_structure.max_depth		Bérénos et al. 2014, Table 2 (founders 0)	
+soay_ped2	founders	404	404	PASS	summary:pedigree.structure.size_structure.n_founders		Bérénos et al. 2014, Table 2	
+soay_ped2	nonzero F	813	813	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		Bérénos et al. 2014, Table 2	
+soay_ped2	mean pairwise relatedness	0.00587		GAP	gap	C1	Bérénos et al. 2014, Table 2	pedantics averages 2x kinship over all pairs, binned at 0.025
+soay_ped2	individuals with F > 0.125	27	27	PASS	annotated:count_gt:0.125:F		Bérénos et al. 2014, Table 2	
+soay_ped2	mean maternal sibship size (offspring per dam)	4.528	4.527631	PASS	annotated:mean:n_offspring		Bérénos et al. 2014, Table 2	
+soay_ped2	mean paternal sibship size (offspring per sire)	6.309	6.309066	PASS	annotated:mean:n_offspring		Bérénos et al. 2014, Table 2	
+soay_ped2	max |F - ASReml F| (all 6,740)	0	2.065015e-14	PASS	reference:asreml:max_abs_diff:F		deposit inversepedigree2.RData (asreml.Ainverse of Pedigree 2); F = diag(A) - 1, deterministic recomputation	
+helgeland	genotyped birds in the pedigree	3116	3116	PASS	reference:genotyped:n_compared:F		Niskanen et al. 2020, Methods: pedigree 'constructed for 3,116 adult house sparrows'	
+helgeland	genotyped birds with at least two full ancestral generations (4 grandparents known)	1241	1241	PASS	reference:genotyped:n_compared:F		Niskanen et al. 2020, Methods: 'reduced the sample size to 1,241 individuals'	Sequoia dummy parents kept; the deposited Estimating_pedigree_F.R removes them first, which gives 490
+sosp_fitness	fitness-phenotyped birds	2821	2821	PASS	reference:f_coeff:n_compared:F		Wolak et al. 2018, Results: 'Across the 2821 individuals'	
+sosp_fitness	mean f, 2821 phenotyped birds	0.074	0.07680147	DIFF	annotated:mean:F		Wolak et al. 2018, Results ('mean f was 0.074 ± 0.052')	the A-inverse pedigree gives one ancestor parents that the f pedigree lacks; the deposit's own f_coeff averages 0.0758
+sosp_fitness	max f, 2821 phenotyped birds	0.347	0.3573812	DIFF	annotated:max:F		Wolak et al. 2018, Results ('range 0.000–0.347')	deposit f_coeff max is 0.357; see mean f
+sosp_fitness	share with f > 0, 2821 phenotyped birds	0.926	0.9322935	DIFF	annotated:frac_gt0:F		Wolak et al. 2018, Results ('7.4% zeroes', so 92.6% above 0)	deposit f_coeff has 7.48% zeros; see mean f
+sosp_fitness	mean immigrant genetic group coefficient	0.52		GAP	gap	D5	Wolak et al. 2018, Results ('mean IGG coefficient was 0.52 ± 0.13SD')	
+sosp_fitness	birds whose F matches deposit f_coeff (|ΔF| <= 1e-6)	2821	1883	DIFF	reference:f_coeff:n_within:F		deposit Wolak_et_al_fitness_Data.txt, f_coeff	the other 938 differ (pedsum higher, by up to 0.088); all 2821 match once A-inverse row 173 (not phenotyped, 21 offspring) is given no parents
+sosp_fitness	max |F - F from deposit A-inverse| (all 3,062)	0	2.842171e-13	PASS	reference:ainv:max_abs_diff:F		deposit Wolak_et_al_fitness_listAinv.txt; F = diag(A) - 1, deterministic recomputation (the pedigree was recovered from the same matrix)	
+black_robin	N	1348	1348	PASS	summary:n_total		Kennedy et al. 2014, Dryad 10.5061/dryad.16g74, DatasheetC (1348 rows)	
+black_robin	founders (Weiser: the two birds of the single-pair bottleneck)	2	6	DIFF	summary:pedigree.structure.size_structure.n_founders		Weiser 2014 PhD thesis (Otago, hdl 10523/4852), ch. 5 Methods, 'Dataset and pedigree' (PDF p. 76)	Weiser counts the bottleneck pair as founders; the male's ancestry to his grandparents is in the file, so it has 6 rows with no known parent
+black_robin	sum of F (authors' IndividualF)	459.6191	459.6191	PASS	annotated:sum:F		Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (sum)	
+black_robin	max F (authors' IndividualF)	0.6542969	0.6542969	PASS	annotated:max:F		Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (max)	
+black_robin	max F ('ranged from 0.25 ... to 0.65')	0.65	0.6542969	PASS	annotated:max:F		Weiser 2014 PhD thesis, ch. 5 Results (PDF p. 82); the chapter is published as Weiser et al. 2016 Evolution 70:154-166	
+black_robin	max |ΔF| vs authors' IndividualF (1348 birds)	0	5e-10	PASS	reference:kennedy_F:max_abs_diff:F		Kennedy et al. 2014, Dryad DatasheetC, IndividualF	
+black_robin	birds with F within 1e-6 of IndividualF	1348	1348	PASS	reference:kennedy_F:n_within:F		Kennedy et al. 2014, Dryad DatasheetC, IndividualF	
+black_robin	birds with F within 1e-6 of Weiser et al. DatasetS1 F	1104	1104	PASS	reference:weiser_F:n_within:F		Weiser et al. 2016, Dryad 10.5061/dryad.81tg6, DatasetS1, F column (1104 birds)	
+black_robin	max |ΔF| vs Weiser et al. DatasetS1 F	0	5e-10	PASS	reference:weiser_F:max_abs_diff:F		Weiser et al. 2016, Dryad DatasetS1, F column	
+scrub_jay	N (Core Region pedigree rows)	678	695	DIFF	summary:n_total		Linderoth et al. 2025, Dryad 10.5061/dryad.z612jm6j0, cr_ped_20240602.tsv (678 rows)	validate adds the 17 parents of translocated birds that have no row (nadiv's prepPed adds the same 17; the deposited matrix drops them)
+scrub_jay	founding ancestors (resident + translocated)	74	106	DIFF	summary:pedigree.structure.size_structure.n_founders		Linderoth et al. 2025 Curr Biol, Results and Figure 2 ('the 74 CR population ancestors'); Dryad cr_ancestors_20240602.tsv	the paper's ancestors are the residents and translocated birds (ANCESTOR = 1); 39 of them have known parents in donor sites. pedsum counts rows with no known parent (89 + 17 added)
+scrub_jay	max F (diag of authors' makeA − 1)	0.25	0.25	PASS	annotated:max:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt (nadiv makeA)	
+scrub_jay	sum of F over the 678 birds (diag of makeA − 1)	10.62646	8.696777	DIFF	reference:makeA_F:sum_pedsum:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug (wrong dii order, fixed in 2.18.0); an independent tabular A on this pedigree gives 8.69677734, as pedsum does
+scrub_jay	birds with F within 1e-6 of the makeA diagonal	678	499	DIFF	reference:makeA_F:n_within:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug; 23 diagonal entries are below 1 (F < 0), impossible for a valid A
+scrub_jay	max |ΔF| vs the makeA diagonal	0	0.0625	DIFF	reference:makeA_F:max_abs_diff:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug
+scrub_jay	inbred birds (makeA diagonal > 1)	222	126	DIFF	summary:pedigree.relatedness.inbreeding.n_inbred		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug; the correct A gives 126
+scrub_jay	share of founder ancestry from RLS-K + WSA-K, 2017 population	0.32		GAP	gap	B1	Linderoth et al. 2025, Results ('a maximum contribution of 32% in 2017'); Dryad T_IE_20230512_2017_pop_contribution.pedstat1 gives 0.3223	
+scrub_jay	mean share from RLS-K + WSA-K, 2008-2022	0.24		GAP	gap	B1	Linderoth et al. 2025, Results ('24% (SD = 0.06) of the expected CR population founder ancestry'); the deposited pedstat1 files give 0.2379 (SD 0.0645)	
+scrub_jay	founders contributing to the 2022 cohort	24		GAP	gap	B1	Linderoth et al. 2025, Dryad number_contributing_lineages_to_cohorts_cr_ped_20230512.tsv	
+seychelles_warbler	records	1482	1482	PASS	summary:n_total		Sparks et al. 2022 Mol Ecol 31:6324, §2.3, Genetic pedigree; preprint SI Table S3 (EcoEvoRxiv 10.32942/osf.io/eq2af)	
+seychelles_warbler	offspring (at least one parent known)	1268	1268	PASS	summary:pedigree.structure.size_structure.n_nonfounders		Sparks et al. preprint SI Table S3	
+seychelles_warbler	maternities	1217	1217	PASS	summary:pedigree.structure.size_structure.n_mother_links		Sparks et al. 2022, §2.3, Genetic pedigree; SI Table S3	
+seychelles_warbler	paternities	1268	1268	PASS	summary:pedigree.structure.size_structure.n_father_links		Sparks et al. 2022, §2.3, Genetic pedigree; SI Table S3	
+seychelles_warbler	mothers	391	391	PASS	summary:pedigree.structure.size_structure.n_female		Sparks et al. preprint SI Table S3	no sex column; validate sexes each parent by role, so females are the mothers
+seychelles_warbler	fathers	367	367	PASS	summary:pedigree.structure.size_structure.n_male		Sparks et al. preprint SI Table S3	no sex column; males are the fathers
+seychelles_warbler	full-sib pairs	696	696	PASS	summary:pedigree.relatedness.relationship_pairs.FS		Sparks et al. preprint SI Table S3	
+seychelles_warbler	maternal half-sib pairs (from per-individual counts)	1669	1669	PASS	annotated:sum:n_mat_half_sibs		Sparks et al. preprint SI Table S3	
+seychelles_warbler	maternal half-sib pairs (relationship_pairs.MHS)	1669	1655	DIFF	summary:pedigree.relatedness.relationship_pairs.MHS		Sparks et al. preprint SI Table S3	relationship_pairs keeps each pair's closest relationship; 14 maternal half-sib pairs are also parent-offspring
+seychelles_warbler	paternal half-sib pairs (from per-individual counts)	2454	2454	PASS	annotated:sum:n_pat_half_sibs		Sparks et al. preprint SI Table S3	
+seychelles_warbler	paternal half-sib pairs (relationship_pairs.PHS)	2454	2435	DIFF	summary:pedigree.relatedness.relationship_pairs.PHS		Sparks et al. preprint SI Table S3	relationship_pairs keeps each pair's closest relationship; 19 paternal half-sib pairs are also parent-offspring
+seychelles_warbler	grandparent links (860 + 913 + 891 + 975)	3639	3639	PASS	annotated:sum:n_grandparents		Sparks et al. preprint SI Table S3 (maternal and paternal grandmothers and grandfathers)	
+seychelles_warbler	maximum pedigree depth (baseline generation 0)	10	10	PASS	summary:pedigree.structure.size_structure.max_depth		Sparks et al. preprint SI Table S3	
+seychelles_warbler	founders	214	214	PASS	summary:pedigree.structure.size_structure.n_founders		Sparks et al. preprint SI Table S3	
+seychelles_warbler	non-zero F	210	210	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		Sparks et al. preprint SI Table S3	
+seychelles_warbler	F > 0.125	41	41	PASS	annotated:count_gt:0.125:F		Sparks et al. preprint SI Table S3	
+seychelles_warbler	mean pairwise relatedness	0.011		GAP	gap	C1	Sparks et al. preprint SI Table S3	
+arctic_fox	individuals	205	252	DIFF	summary:n_total		Noren et al. 2016 Mol Ecol 25:3309, abstract ('33 litters with a total of 205 individuals')	the sheet has 247 rows (240 pups with a litter id, 7 adults); validate adds 5 sires with no row (Male1-Male4 and '1')
+arctic_fox	founders	5	16	DIFF	summary:pedigree.structure.size_structure.n_founders		Noren et al. 2016, abstract ('founded by only five individuals')	the authors' pedigree knew the ancestry of the sires Male1-Male4 and of some sires coded 0; the sheet does not
+arctic_fox	animals with F within 1e-6 of the sheet's F	247	207	DIFF	reference:authors_F:n_within:F		Noren et al. 2016, Dryad 10.5061/dryad.6g8t8, F column	40 animals descend from sires whose ancestry is not in the sheet (e.g. Male3 x Fox20 offspring: F 0.125 in the sheet, 0 from its parentage); 4 have F > 0 with a parent coded 0
+arctic_fox	max |ΔF| vs the sheet's F	0	0.25	DIFF	reference:authors_F:max_abs_diff:F		Noren et al. 2016, Dryad, F column	parentage missing from the sheet (see above)
+arctic_fox	sum of F (sheet's F column)	13.53125	10.84375	DIFF	reference:authors_F:sum_pedsum:F		Noren et al. 2016, Dryad, F column (sum)	parentage missing from the sheet (see above)
+steelhead	N (abstract: 6,602 fish)	6602	6177	DIFF	summary:n_total		Naish et al. 2013 Mol Ecol 22:1295, abstract (PubMed 23379933)	the Dryad file has 6,173 fish rows, plus 4 sires without rows that validate adds (6,177); the paper's other 429 fish are not in the deposit
+steelhead	N (deposit rows + 4 sires without rows)	6177	6177	PASS	summary:n_total		Dryad file 20329 (6,173 rows; sires A01106, A01107, A01108, A01114 have no row)	
+steelhead	founders (both parents unknown)	1249	1249	PASS	summary:pedigree.structure.size_structure.n_founders		Dryad file 20329 (1,245 rows with blank Dam and Sire, plus the 4 added sires)	
+steelhead	half-founders (one parent NA)	104	104	PASS	summary:pedigree.structure.size_structure.n_half_founders		Dryad file 20329 (78 rows with Dam NA, 26 with Sire NA)	
+steelhead	deepest generation (abstract names F4; founders F0)	4	3	DIFF	summary:pedigree.structure.size_structure.max_depth		Naish et al. 2013, abstract ('in F4, percentage individuals with inbreeding coefficients Δf > 0 = 15.7%')	the deposit's deepest fish are at depth 3, so it holds no F4 fish (or the paper numbers generations from a different base); full text not reachable to check
+steelhead	sum of F	12.84375	12.84375	PASS	annotated:sum:F		independent tabular-method recomputation on Dryad file 20329 (deterministic; not a published value)	
+steelhead	inbred individuals	126	126	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		independent tabular-method recomputation on Dryad file 20329 (deterministic; not a published value)	
+peromyscus	N	11483	11483	PASS	summary:n_total		Dryad file 21285 (11,483 rows)	
+peromyscus	founders (TREATMENT WildCaught or WildSire)	54	54	PASS	summary:pedigree.structure.size_structure.n_founders		Dryad file 21285 (51 WildCaught + 3 WildSire, the only rows with DAM = SIRE = 0)	
+peromyscus	maximum generation (deposit GEN; abstract: propagated for 20 generations)	21	21	PASS	summary:pedigree.structure.size_structure.max_depth		Dryad file 21285, GEN column (0-21; GEN 20-21 include the inter-line crosses RanX/SSPx); Willoughby et al. 2015 abstract	
+peromyscus	max abs(pedsum depth - authors' GEN)	0	0	PASS	reference:authors_gen:max_abs_diff:ped_depth		Dryad file 21285, GEN column	
+peromyscus	rows with an authors' F (one is 'x')	11482	11482	PASS	reference:authors_F:n_compared:F		Dryad file 21285, F column	
+peromyscus	max abs(pedsum F - authors' F)	0	0.22395	DIFF	reference:authors_F:max_abs_diff:F		Dryad file 21285, F column (4 decimals)	the authors' F is truncated to 4 decimals and comes from a slightly different pedigree: exact through GEN 4, then pedsum is higher by about 3e-4 by GEN 20 in every line, and 3 families (23 rows; 8415-8417, 14075, 15290 sibships) differ by up to 0.224. pedsum equals an independent recursion on the deposited DAM/SIRE for every row
+peromyscus	rows with abs(pedsum F - authors' F) <= 1e-6	11482	1318	DIFF	reference:authors_F:n_within:F		Dryad file 21285, F column	as above; exact agreement only where the true F has at most 4 decimals
+peromyscus	rows with abs(pedsum F - authors' F) <= 1e-4 (4-decimal truncation)	11482	3844	DIFF	reference:authors_F:n_within:F		Dryad file 21285, F column	as above
+peromyscus	sum of F over the rows with an authors' F	1504.956	1508.302	DIFF	reference:authors_F:sum_pedsum:F		Dryad file 21285, F column summed (1504.9558)	as above; pedsum's sum is 0.22% higher
+red_squirrel	N	928	928	PASS	summary:n_total		Dryad file 31657 (928 rows)	
+red_squirrel	founders (both parents NA)	434	434	PASS	summary:pedigree.structure.size_structure.n_founders		Dryad file 31657	
+red_squirrel	half-founders (one parent NA)	176	176	PASS	summary:pedigree.structure.size_structure.n_half_founders		Dryad file 31657 (160 with dam only, 16 with sire only)	
+red_squirrel	sum of F	2.2229	2.2229	PASS	annotated:sum:F		independent tabular-method recomputation on Dryad file 31657 (deterministic; not a published value)	
+red_squirrel	inbred individuals	29	29	PASS	summary:pedigree.relatedness.inbreeding.n_inbred		independent tabular-method recomputation on Dryad file 31657 (deterministic; not a published value)	
