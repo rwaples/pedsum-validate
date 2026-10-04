@@ -37,8 +37,9 @@ python benchmarks/published/run_published.py
 
 `dryad.py` exchanges them for a token on each run. Without them, the Dryad
 datasets ERROR and the rest still run; once a file is in `.cache/`, no token
-is needed. A full run takes about 65 seconds once the files are cached
-(about 15 s of it is `effective-size` with every estimator). The largest step is F from the Soay sheep's
+is needed. A full run takes about 90 seconds once the files are cached
+(about 15 s of it is `effective-size` with every estimator, and about 25 s
+the phantom-parent rerun of `ne_long_term_contributions`). The largest step is F from the Soay sheep's
 6,740-row A⁻¹ (about 4.5 s; the run peaks at 0.9 GB there).
 
 ## What it does
@@ -79,6 +80,13 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
    non-numeric Ne cell names why there is no estimate:
    - `skipped: unknown sex`.
    - `missing_metadata:incomplete_parentage`: the pedigree has half-founders; see #9.
+
+   `ne_long_term_contributions_phantom_parents` reruns that estimator on
+   `validate --fill-half-founders` output (in `.work/<name>/validate_filled/`
+   and `effective_filled/`), which gives each half-founder's missing parent
+   its own unrelated founder. It is the same value where there are no
+   half-founders. Checks never read the filled pedigree, since filling raises
+   the founder counts.
    - `no_estimate:<code>`: the estimator ran but found no estimate
      (`too_few_cohorts`, `no_positive_rate`, `reference_not_inbred`, ...).
 

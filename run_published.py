@@ -49,6 +49,7 @@ from pedigree_graph.effective_size import ALL_EFFECTIVE_SIZE_ESTIMATORS as ALL_E
 
 HERE = Path(__file__).resolve().parent
 # The estimators effective-size refuses on unknown sex (pedsum/cli.py _SEX_DEPENDENT_ESTIMATORS).
+LTC_FILLED = "ne_long_term_contributions_phantom_parents"
 SEX_ESTIMATORS = frozenset({"ne_sex_ratio", "ne_variance_family_size", "ne_hill_overlapping"})
 REPO = HERE.parents[1]
 PEDSUM = REPO / "pedigree_summary.py"
@@ -454,13 +455,20 @@ class Observed:
         id_map: dict[str, int],
         effective: dict[str, Any] | None,
         reference: dict[str, dict[str, float]],
+        ltc_filled: dict[str, Any] | None = None,
     ) -> None:
-        """Hold one dataset's pedsum outputs, its id map and the authors' per-individual values."""
+        """Hold one dataset's pedsum outputs, its id map and the authors' per-individual values.
+
+        ``ltc_filled`` is the ``ne_long_term_contributions`` record on the
+        pedigree with its half-founders filled by phantom parents; it feeds
+        the overview only, never a check.
+        """
         self.summary = summary
         self.annotated = annotated
         self.id_map = id_map
         self.effective = effective
         self.reference = reference
+        self.ltc_filled = ltc_filled
         self._pg: Any = None
 
     def summary_value(self, path: str) -> float:
@@ -669,7 +677,43 @@ def run_dataset(name: str, spec: dict[str, Any], cache: Path, work: Path) -> tup
     if code != 0:
         return None, f"effective-size exited {code}; see {log}"
     effective = yaml.safe_load((ds / "effective" / "effective_size.yaml").read_text())
-    return Observed(summary, annotated, id_map, effective, reference), None
+    ltc_filled = _ltc_with_phantom_parents(ds, summary, effective, extra, log)
+    return Observed(summary, annotated, id_map, effective, reference, ltc_filled), None
+
+
+def _ltc_with_phantom_parents(
+    ds: Path, summary: dict[str, Any], effective: dict[str, Any], extra: list[str], log: Path
+) -> dict[str, Any]:
+    """``ne_long_term_contributions`` with each half-founder's missing parent filled by a phantom founder.
+
+    The estimator refuses any pedigree with a half-founder (#9), so it reruns
+    on ``validate --fill-half-founders`` output, kept in its own directories
+    so every check still reads the unfilled pedigree. Without half-founders
+    the fill changes nothing and the main record is reused.
+    """
+    if summary["pedigree"]["structure"]["size_structure"]["n_half_founders"] == 0:
+        return effective["effective_size"]["ne_long_term_contributions"]
+    run_pedsum(
+        [
+            "validate",
+            "--in",
+            str(ds / "input.tsv"),
+            "--out",
+            str(ds / "validate_filled"),
+            "--fill-half-founders",
+            *extra,
+        ],
+        log,
+    )
+    filled = ds / "validate_filled" / "validate.tsv.gz"
+    if not filled.exists():
+        return {"ne": None, "reason": "error", "code": "validate --fill-half-founders wrote no pedigree"}
+    out = ds / "effective_filled"
+    es = ["effective-size", "--in", str(filled), "--out", str(out), "--estimators", "ne_long_term_contributions"]
+    code = run_pedsum([*es, *extra], log)
+    if code != 0:
+        return {"ne": None, "reason": "error", "code": f"effective-size exited {code}"}
+    return yaml.safe_load((out / "effective_size.yaml").read_text())["effective_size"]["ne_long_term_contributions"]
 
 
 def overview_row(name: str, obs: Observed) -> dict[str, Any]:
@@ -700,6 +744,12 @@ def overview_row(name: str, obs: Observed) -> dict[str, Any]:
             row[est] = ":".join(x for x in (record.get("reason"), record.get("code")) if x)
     row["ne_individual_delta_f_unrelated_founders"] = estimates.get("ne_individual_delta_f", {}).get(
         "ne_unrelated_founders"
+    )
+    filled = obs.ltc_filled or {}
+    row[LTC_FILLED] = (
+        filled["ne"]
+        if filled.get("ne") is not None
+        else ":".join(x for x in (filled.get("reason"), filled.get("code")) if x)
     )
     return row
 
@@ -748,13 +798,16 @@ def write_reports(results: list[Result], overview: list[dict[str, Any]], out: Pa
             w = csv.writer(fh, delimiter="\t", lineterminator="\n")
             w.writerow(cols)
             w.writerows([["" if row[c] is None else row[c] for c in cols] for row in overview])
-        shown = ["dataset", "N", "founders", "half_founders", "max_depth", "frac_inbred", "mean_F", *ALL_ESTIMATORS]
+        ltc = ALL_ESTIMATORS.index("ne_long_term_contributions") + 1
+        estimators = [*ALL_ESTIMATORS[:ltc], LTC_FILLED, *ALL_ESTIMATORS[ltc:]]
+        shown = ["dataset", "N", "founders", "half_founders", "max_depth", "frac_inbred", "mean_F", *estimators]
         lines += [
             "",
             "## pedsum on every dataset",
             "",
             "Headline `summarize` statistics and all eight `effective-size` estimators, whether or not a "
             "published value exists. A non-numeric Ne cell gives the reason there is no estimate. "
+            f"`{LTC_FILLED}` reruns `ne_long_term_contributions` after `validate --fill-half-founders`. "
             "All columns are in `pedsum_all.tsv`.",
             "",
             "| " + " | ".join(shown) + " |",
