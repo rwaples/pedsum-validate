@@ -33,7 +33,7 @@ The Dryad pedigrees add GAP targets for B1 and C1:
   contribution of 32% in 2017". These are expected genetic contributions by
   the method of Hunter et al. (2019), computed from nadiv's A matrix. That
   matrix has the nadiv 2.17.2 `makeA()` bug
-  (`benchmarks/published/differences.md`, section 9), so these values may
+  (`differences.md`, section 9), so these values may
   carry it too.
 - **C1.** pedantics' mean pairwise relatedness: 0.00295 and 0.00587 for
   Soay sheep Pedigrees 1 and 2 (Bérénos et al. 2014, Table 2), and 0.011 for

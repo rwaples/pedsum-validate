@@ -1,0 +1,23 @@
+# pedsum-validate: checks pedsum against published pedigree statistics.
+#
+# pedsum is pinned to a git commit so a run is reproducible. To check a local
+# checkout instead, replace the entry with (do NOT commit):
+#   pedsum = { path = "../pedsum", editable = true }
+[workspace]
+name = "pedsum-validate"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+requires-pixi = ">=0.76,<0.77"
+
+[dependencies]
+python = "3.14.*"
+ruff = "0.16.*"
+
+[pypi-dependencies]
+pedsum = { git = "https://github.com/rwaples/pedsum.git", rev = "3f67e613f08adbae2ce08da97b5cad34262561b3" }
+rdata = "*"
+openpyxl = "*"
+
+[tasks]
+harness = { cmd = "python run_published.py", description = "Run every dataset and write results/" }
+lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }

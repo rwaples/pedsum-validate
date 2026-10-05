@@ -1,0 +1,9 @@
+# Downloaded source files and per-dataset pedsum runs
+.cache/
+.work/
+
+# pixi env
+.pixi/
+
+__pycache__/
+.ruff_cache/

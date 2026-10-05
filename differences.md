@@ -232,7 +232,7 @@ recursion, for every individual of these pedigrees:
   - `validate` refuses any individual with unknown sex that never bred. That
     affects dama (1), arrui (1), dorcas (7) and `deep_ped` (521 rows) unless
     `--allow-missing-sex` is given.
-  - This is input policy (see issue #7), not a difference in any computed
+  - This is input policy (see issue rwaples/pedsum#7), not a difference in any computed
     value. With the flag, every check on those pedigrees matches.
 
 ## Not yet comparable

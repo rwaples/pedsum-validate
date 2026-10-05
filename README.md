@@ -3,20 +3,23 @@
 Runs pedsum on public pedigrees whose statistics have been published, and
 compares pedsum's output with those values. The latest results are in
 [`results/results.md`](results/results.md). Background on each source, and the
-citations, are in [`docs/benchmark-pedigrees.md`](../../docs/benchmark-pedigrees.md).
+citations, are in [`docs/benchmark-pedigrees.md`](docs/benchmark-pedigrees.md).
 
 ## Run it
 
-From the repo root, in an environment with pedsum's dependencies plus
-[`rdata`](https://pypi.org/project/rdata/), which reads R `.rda` and `.RData`
-files, and [`openpyxl`](https://pypi.org/project/openpyxl/), which reads
-`.xlsx` files:
+With [pixi](https://pixi.sh). `pixi.toml` pins
+[pedsum](https://github.com/rwaples/pedsum) to a git commit, and adds
+[`rdata`](https://pypi.org/project/rdata/) (R `.rda`/`.RData` files) and
+[`openpyxl`](https://pypi.org/project/openpyxl/) (`.xlsx` files):
 
 ```bash
-pip install rdata openpyxl
-python benchmarks/published/run_published.py                    # all datasets
-python benchmarks/published/run_published.py --only atlas,btped  # a subset
+pixi run harness                      # all datasets
+pixi run harness --only atlas,btped   # a subset
 ```
+
+To check a local pedsum checkout instead, point `pixi.toml`'s `pedsum` entry
+at it (`pedsum = { path = "../pedsum", editable = true }`) without
+committing that change.
 
 The script needs network access to `raw.githubusercontent.com`,
 `ndownloader.figshare.com`, `downloads.sourceforge.net`,
@@ -32,7 +35,7 @@ install -m 600 /dev/null ~/.config/pedsum/dryad.env
 # DRYAD_CLIENT_ID=<application id>
 # DRYAD_CLIENT_SECRET=<secret>
 set -a; . ~/.config/pedsum/dryad.env; set +a
-python benchmarks/published/run_published.py
+pixi run harness
 ```
 
 `dryad.py` exchanges them for a token on each run. Without them, the Dryad
@@ -60,8 +63,8 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
    - `parent_overrides` corrects documented errors first, and an `ainv_list`
      source is turned back into a parent table.
 
-   This step stands in for the `convert` subcommand proposed in #6.
-3. **Runs pedsum**: `pedigree_summary.py validate`, then `summarize` and
+   This step stands in for the `convert` subcommand proposed in rwaples/pedsum#6.
+3. **Runs pedsum**: `pedsum validate`, then `summarize` and
    `effective-size` on the repaired output (`validate.tsv.gz`).
    - `effective-size` runs every estimator that can run. On a pedigree with
      any unknown sex it leaves out the three that need sex (`ne_sex_ratio`,
@@ -79,7 +82,7 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
    `results/results.md`, whether or not a published value exists. A
    non-numeric Ne cell names why there is no estimate:
    - `skipped: unknown sex`.
-   - `missing_metadata:incomplete_parentage`: the pedigree has half-founders; see #9.
+   - `missing_metadata:incomplete_parentage`: the pedigree has half-founders; see rwaples/pedsum#9.
 
    `ne_long_term_contributions_phantom_parents` reruns that estimator on
    `validate --fill-half-founders` output (in `.work/<name>/validate_filled/`
@@ -137,7 +140,7 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 - **Missing sex blocks real pedigrees.** `validate` refuses any individual with
   unknown sex that is not a parent. That rejects dama (1 animal), arrui (1),
   dorcas (7) and deep_ped (521 rows) unless `--allow-missing-sex` is passed,
-  which this harness does for those datasets. See issue #7. `effective-size`
+  which this harness does for those datasets. See issue rwaples/pedsum#7. `effective-size`
   now refuses unknown sex only for the three estimators that use it, so
   `ne_individual_delta_f` runs on these studbooks.
 - **Rum red deer.** pedsum's F on the Figshare pedigree equals an independent
