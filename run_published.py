@@ -667,9 +667,9 @@ def run_dataset(name: str, spec: dict[str, Any], cache: Path, work: Path) -> tup
 
     # Every estimator that can run. The sex-based ones refuse unknown sex, so they are left out
     # (and show as not_requested) when any row's sex is unknown. Only Ne_iΔF uses --reference-col.
-    # validate writes unknown sex as -1; read the column as text, since the other tokens' encoding varies (rwaples/pedsum#11).
+    # validate writes sex in PLINK coding, unknown as 0; read the column as text (rwaples/pedsum#11).
     sex = pl.read_csv(fixed, separator="\t", columns=["sex"], schema_overrides={"sex": pl.String})["sex"]
-    unknown_sex = bool((sex == "-1").any())
+    unknown_sex = bool((sex == "0").any())
     estimators = [e for e in ALL_ESTIMATORS if not (unknown_sex and e in SEX_ESTIMATORS)]
     es_args = ["--estimators", ",".join(estimators)]
     if spec.get("reference_column"):

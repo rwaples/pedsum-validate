@@ -1,0 +1,6 @@
+id	mother	father	sex	birth_year
+A1	NA	NA	F	1990
+A2	NA	NA	M	1990
+A3	A1	A2	F	2000
+A4	A1	A2	M	2000
+A5	A3	A4	F	2010

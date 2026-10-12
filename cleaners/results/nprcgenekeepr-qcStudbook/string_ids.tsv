@@ -1,0 +1,6 @@
+id	mother	father	sex
+A1	NA	NA	F
+A2	NA	NA	M
+A3	A1	A2	F
+A4	A1	A2	M
+A5	A3	A4	F

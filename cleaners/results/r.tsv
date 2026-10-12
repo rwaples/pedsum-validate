@@ -1,0 +1,300 @@
+fixture	program	outcome	n_out	error	warnings	messages	printed
+both_roles_sexed	optiSel-prePed	error		Please correct this	Dams appearing as Sires - assumed selfing in pedigree		The sex of the following animals was not compatible with the pedigree, so | it was modified: | Sire Dam | 4    2   1 | The following individuals appear as sire and as dam: | Indiv Sire Dam | 4     4    2   1
+both_roles_unsexed	optiSel-prePed	error		Please correct this	Dams appearing as Sires - assumed selfing in pedigree		The following individuals appear as sire and as dam: | Indiv Sire  Dam | 6     6 <NA> <NA>
+clean	optiSel-prePed	ok	5				
+cycle2_dam_only	optiSel-prePed	ok	6				Pedigree loops were detected. We recommend to correct them manually before | using prePed(). The parents of the following individuals are set to unknown | to remove the loops. | Sire Dam | 1   20   3
+cycle2_mixed	optiSel-prePed	ok	6				Pedigree loops were detected. We recommend to correct them manually before | using prePed(). The parents of the following individuals are set to unknown | to remove the loops. | Sire Dam | 2   20   3
+cycle3_mixed	optiSel-prePed	ok	10				Pedigree loops were detected. We recommend to correct them manually before | using prePed(). The parents of the following individuals are set to unknown | to remove the loops. | Sire Dam | 10   20  12
+dup_conflict_fewer_first	optiSel-prePed	ok	5				Duplicated IDs were removed. | This includes e.g. | Indiv Sire  Dam  Sex Born | 4     4 <NA> <NA> male 2000
+dup_conflict	optiSel-prePed	ok	5				Duplicated IDs were removed. | This includes e.g. | Indiv Sire  Dam  Sex Born | 6     4 <NA> <NA> male 2000
+dup_exact	optiSel-prePed	ok	5				Duplicated IDs were removed. | This includes e.g. | Indiv Sire Dam  Sex Born | 6     4    2   1 male 2000
+missing_id	optiSel-prePed	error		missing values in 'row.names' are not allowed			
+missing_parent_both_roles	optiSel-prePed	error		Please correct this	Dams appearing as Sires - assumed selfing in pedigree		The following individuals appear as sire and as dam: | Indiv Sire  Dam | 9     9 <NA> <NA>
+missing_sex_nonparent	optiSel-prePed	ok	5				
+missing_sex_parent	optiSel-prePed	ok	5				
+mother_eq_father	optiSel-prePed	error		Please correct this	Dams appearing as Sires - assumed selfing in pedigree		The sex of the following animals was not compatible with the pedigree, so | it was modified: | Sire Dam | 4    2   1 | The following individuals appear as sire and as dam: | Indiv Sire Dam | 4     4    2   1
+one_parent_known	optiSel-prePed	ok	5				
+own_parent	optiSel-prePed	ok	5				Pedigree loops were detected. We recommend to correct them manually before | using prePed(). The parents of the following individuals are set to unknown | to remove the loops. | Sire Dam | 5    4   5
+parent_born_after	optiSel-prePed	ok	5				
+parent_not_a_row	optiSel-prePed	ok	6				
+parents_after_offspring	optiSel-prePed	ok	5				
+sex_contradicts_role	optiSel-prePed	ok	5				The sex of the following animals was not compatible with the pedigree, so | it was modified: | Sire  Dam | 2 <NA> <NA>
+string_ids	optiSel-prePed	ok	5				
+young_parent	optiSel-prePed	ok	5				
+zero_missing	optiSel-prePed	ok	5				
+both_roles_sexed	visPedigree-tidyped	error		Sex conflict detected: The following individual(s) appear as both Sire and Dam: 4. This is biologically impossible. Please check and correct the pedigree data. If this is a plant pedigree with monoecious species, set selfing = TRUE.			
+both_roles_unsexed	visPedigree-tidyped	error		Sex conflict detected: The following individual(s) appear as both Sire and Dam: 6. This is biologically impossible. Please check and correct the pedigree data. If this is a plant pedigree with monoecious species, set selfing = TRUE.			
+clean	visPedigree-tidyped	ok	5				
+cycle2_dam_only	visPedigree-tidyped	error		Pedigree error! Pedigree loops detected:  1 -> 3 -> 1			
+cycle2_mixed	visPedigree-tidyped	error		Pedigree error! Pedigree loops detected:  2 -> 3 -> 2			
+cycle3_mixed	visPedigree-tidyped	error		Pedigree error! Pedigree loops detected:  10 -> 11 -> 12 -> 10			
+dup_conflict_fewer_first	visPedigree-tidyped	error		Fatal error: Duplicate Ind IDs with different parents found!			
+dup_conflict	visPedigree-tidyped	error		Fatal error: Duplicate Ind IDs with different parents found!			
+dup_exact	visPedigree-tidyped	ok	5		Removed 1 records with duplicate Ind/Sire/Dam IDs.		
+missing_id	visPedigree-tidyped	ok	5		Missing values in 'Ind' column; records discarded.		
+missing_parent_both_roles	visPedigree-tidyped	error		Sex conflict detected: The following individual(s) appear as both Sire and Dam: 9. This is biologically impossible. Please check and correct the pedigree data. If this is a plant pedigree with monoecious species, set selfing = TRUE.			
+missing_sex_nonparent	visPedigree-tidyped	ok	5				
+missing_sex_parent	visPedigree-tidyped	ok	5				
+mother_eq_father	visPedigree-tidyped	error		Sex conflict detected: The following individual(s) appear as both Sire and Dam: 4. This is biologically impossible. Please check and correct the pedigree data. If this is a plant pedigree with monoecious species, set selfing = TRUE.			
+one_parent_known	visPedigree-tidyped	ok	5				
+own_parent	visPedigree-tidyped	error		Pedigree error! Pedigree loops detected:  5 -> 5 (self-loop)			
+parent_born_after	visPedigree-tidyped	ok	5				
+parent_not_a_row	visPedigree-tidyped	ok	6				
+parents_after_offspring	visPedigree-tidyped	ok	5				
+sex_contradicts_role	visPedigree-tidyped	error		Sex annotation conflicts detected for: 2. These individuals have explicit sex that contradicts their role as Sire/Dam. Please check and correct the pedigree data.			
+string_ids	visPedigree-tidyped	ok	5				
+young_parent	visPedigree-tidyped	ok	5				
+zero_missing	visPedigree-tidyped	ok	5				
+both_roles_sexed	visPedigree-tidyped-selfing	error		Sex annotation conflicts for monoecious individuals: 4. These individuals appear as both Sire and Dam but have explicit male/female annotation. Remove or change their Sex annotation to 'monoecious' or NA.		Selfing mode: 1 individual(s) appear as both Sire and Dam: 4. These will be assigned Sex = 'monoecious'.	
+both_roles_unsexed	visPedigree-tidyped-selfing	ok	8			Selfing mode: 1 individual(s) appear as both Sire and Dam: 6. These will be assigned Sex = 'monoecious'.	
+clean	visPedigree-tidyped-selfing	ok	5				
+cycle2_dam_only	visPedigree-tidyped-selfing	error		Pedigree error! Pedigree loops detected:  1 -> 3 -> 1			
+cycle2_mixed	visPedigree-tidyped-selfing	error		Pedigree error! Pedigree loops detected:  2 -> 3 -> 2			
+cycle3_mixed	visPedigree-tidyped-selfing	error		Pedigree error! Pedigree loops detected:  10 -> 11 -> 12 -> 10			
+dup_conflict_fewer_first	visPedigree-tidyped-selfing	error		Fatal error: Duplicate Ind IDs with different parents found!			
+dup_conflict	visPedigree-tidyped-selfing	error		Fatal error: Duplicate Ind IDs with different parents found!			
+dup_exact	visPedigree-tidyped-selfing	ok	5		Removed 1 records with duplicate Ind/Sire/Dam IDs.		
+missing_id	visPedigree-tidyped-selfing	ok	5		Missing values in 'Ind' column; records discarded.		
+missing_parent_both_roles	visPedigree-tidyped-selfing	ok	8			Selfing mode: 1 individual(s) appear as both Sire and Dam: 9. These will be assigned Sex = 'monoecious'.	
+missing_sex_nonparent	visPedigree-tidyped-selfing	ok	5				
+missing_sex_parent	visPedigree-tidyped-selfing	ok	5				
+mother_eq_father	visPedigree-tidyped-selfing	error		Sex annotation conflicts for monoecious individuals: 4. These individuals appear as both Sire and Dam but have explicit male/female annotation. Remove or change their Sex annotation to 'monoecious' or NA.		Selfing mode: 1 individual(s) appear as both Sire and Dam: 4. These will be assigned Sex = 'monoecious'.	
+one_parent_known	visPedigree-tidyped-selfing	ok	5				
+own_parent	visPedigree-tidyped-selfing	error		Pedigree error! Pedigree loops detected:  5 -> 5 (self-loop)			
+parent_born_after	visPedigree-tidyped-selfing	ok	5				
+parent_not_a_row	visPedigree-tidyped-selfing	ok	6				
+parents_after_offspring	visPedigree-tidyped-selfing	ok	5				
+sex_contradicts_role	visPedigree-tidyped-selfing	error		Sex annotation conflicts detected for: 2. These individuals have explicit sex that contradicts their role as Sire/Dam. Please check and correct the pedigree data.			
+string_ids	visPedigree-tidyped-selfing	ok	5				
+young_parent	visPedigree-tidyped-selfing	ok	5				
+zero_missing	visPedigree-tidyped-selfing	ok	5				
+both_roles_sexed	nadiv-prepPed	ok	6		Dams appearing as Sires - assumed selfing in pedigree		
+both_roles_unsexed	nadiv-prepPed	ok	8		Dams appearing as Sires - assumed selfing in pedigree		
+clean	nadiv-prepPed	ok	5				
+cycle2_dam_only	nadiv-prepPed	error		Problem: infinite pedigree loop involving individual1and dam/female ancestors Check for individuals that appear as their own ancestor			
+cycle2_mixed	nadiv-prepPed	ok	6				Error in numPed(ped_fixed_ord[, 1:3]) : | Offspring appearing before their dams: first use the 'prepPed' function
+cycle3_mixed	nadiv-prepPed	ok	10				Error in numPed(ped_fixed_ord[, 1:3]) : | Offspring appearing before their dams: first use the 'prepPed' function
+dup_conflict_fewer_first	nadiv-prepPed	error		some individuals appear more than once in the pedigree			
+dup_conflict	nadiv-prepPed	error		some individuals appear more than once in the pedigree			
+dup_exact	nadiv-prepPed	error		some individuals appear more than once in the pedigree			
+missing_id	nadiv-prepPed	ok	5		Missing value in the ID column - row discarded | Check to ensure first three columns of the pedigree object are ID, Dam, and Sire		
+missing_parent_both_roles	nadiv-prepPed	error		replacement has 2 rows, data has 1	Dams appearing as Sires - assumed selfing in pedigree | Selfing in the pedigree: the gender argument might not apply		
+missing_sex_nonparent	nadiv-prepPed	ok	5				
+missing_sex_parent	nadiv-prepPed	ok	5				
+mother_eq_father	nadiv-prepPed	ok	5		Dams appearing as Sires - assumed selfing in pedigree		
+one_parent_known	nadiv-prepPed	ok	5				
+own_parent	nadiv-prepPed	error		Problem: infinite pedigree loop involving individual5and dam/female ancestors Check for individuals that appear as their own ancestor			
+parent_born_after	nadiv-prepPed	ok	5				
+parent_not_a_row	nadiv-prepPed	ok	6				
+parents_after_offspring	nadiv-prepPed	ok	5				
+sex_contradicts_role	nadiv-prepPed	ok	5				
+string_ids	nadiv-prepPed	ok	5				
+young_parent	nadiv-prepPed	ok	5				
+zero_missing	nadiv-prepPed	ok	5		Zero in the dam column interpreted as a missing parent | Zero in the sire column interpreted as a missing parent		
+both_roles_sexed	kinship2-pedigree	error		Id not female, but is a mother: 4			
+both_roles_unsexed	kinship2-pedigree	error		Id not male, but is a father: 6			
+clean	kinship2-pedigree	ok	5				
+cycle2_dam_only	kinship2-pedigree	error		Impossible pedegree: someone is their own ancestor			
+cycle2_mixed	kinship2-pedigree	error		Impossible pedegree: someone is their own ancestor			
+cycle3_mixed	kinship2-pedigree	error		Impossible pedegree: someone is their own ancestor			
+dup_conflict_fewer_first	kinship2-pedigree	error		Duplicate subject id: 4			
+dup_conflict	kinship2-pedigree	error		Duplicate subject id: 4			
+dup_exact	kinship2-pedigree	error		Duplicate subject id: 4			
+missing_id	kinship2-pedigree	error		Missing value for the id variable			
+missing_parent_both_roles	kinship2-pedigree	error		Value of 'dadid' not found in the id list 9			
+missing_sex_nonparent	kinship2-pedigree	ok	5				
+missing_sex_parent	kinship2-pedigree	error		Id not female, but is a mother: 1			
+mother_eq_father	kinship2-pedigree	error		Id not female, but is a mother: 4			
+one_parent_known	kinship2-pedigree	error		Subjects must have both a father and mother, or have neither 5			
+own_parent	kinship2-pedigree	error		Impossible pedegree: someone is their own ancestor			
+parent_born_after	kinship2-pedigree	ok	5				
+parent_not_a_row	kinship2-pedigree	error		Value of 'dadid' not found in the id list 9			
+parents_after_offspring	kinship2-pedigree	ok	5				
+sex_contradicts_role	kinship2-pedigree	error		Id not male, but is a father: 2			
+string_ids	kinship2-pedigree	ok	5				
+young_parent	kinship2-pedigree	ok	5				
+zero_missing	kinship2-pedigree	error		Value of 'dadid' not found in the id list 0 0			
+both_roles_sexed	kinship2-fixParents	error		Id not male, but is a father: 4			
+both_roles_unsexed	kinship2-fixParents	error		Id not male, but is a father: 6			
+clean	kinship2-fixParents	ok	5				
+cycle2_dam_only	kinship2-fixParents	error		Impossible pedegree: someone is their own ancestor			
+cycle2_mixed	kinship2-fixParents	error		Impossible pedegree: someone is their own ancestor			
+cycle3_mixed	kinship2-fixParents	error		Impossible pedegree: someone is their own ancestor			
+dup_conflict_fewer_first	kinship2-fixParents	error		Duplicate subject id: 4			
+dup_conflict	kinship2-fixParents	error		Duplicate subject id: 4			
+dup_exact	kinship2-fixParents	error		Duplicate subject id: 4			
+missing_id	kinship2-fixParents	error		Missing value for the id variable			
+missing_parent_both_roles	kinship2-fixParents	error		Duplicate subject id: 9			
+missing_sex_nonparent	kinship2-fixParents	ok	5				
+missing_sex_parent	kinship2-fixParents	ok	5				
+mother_eq_father	kinship2-fixParents	error		Id not male, but is a father: 4			
+one_parent_known	kinship2-fixParents	ok	6				
+own_parent	kinship2-fixParents	error		Impossible pedegree: someone is their own ancestor			
+parent_born_after	kinship2-fixParents	ok	5				
+parent_not_a_row	kinship2-fixParents	ok	6				
+parents_after_offspring	kinship2-fixParents	ok	5				
+sex_contradicts_role	kinship2-fixParents	ok	5				
+string_ids	kinship2-fixParents	ok	5				
+young_parent	kinship2-fixParents	ok	5				
+zero_missing	kinship2-fixParents	error		Duplicate subject id: 0			
+both_roles_sexed	purgeR-ped_rename	ok	6				
+both_roles_unsexed	purgeR-ped_rename	ok	8				
+clean	purgeR-ped_rename	ok	5				
+cycle2_dam_only	purgeR-ped_rename	error		Dams and sires must be declared before their offspring!			
+cycle2_mixed	purgeR-ped_rename	error		Dams and sires must be declared before their offspring!			
+cycle3_mixed	purgeR-ped_rename	error		Dams and sires must be declared before their offspring!			
+dup_conflict_fewer_first	purgeR-ped_rename	error		There are repeated individual IDs			
+dup_conflict	purgeR-ped_rename	error		There are repeated individual IDs			
+dup_exact	purgeR-ped_rename	error		There are repeated individual IDs			
+missing_id	purgeR-ped_rename	error		missing value where TRUE/FALSE needed			
+missing_parent_both_roles	purgeR-ped_rename	ok	7				
+missing_sex_nonparent	purgeR-ped_rename	ok	5				
+missing_sex_parent	purgeR-ped_rename	ok	5				
+mother_eq_father	purgeR-ped_rename	ok	5				
+one_parent_known	purgeR-ped_rename	ok	5				
+own_parent	purgeR-ped_rename	error		Individuals cannot be born from themselves!			
+parent_born_after	purgeR-ped_rename	ok	5				
+parent_not_a_row	purgeR-ped_rename	ok	5				
+parents_after_offspring	purgeR-ped_rename	error		Dams and sires must be declared before their offspring!			
+sex_contradicts_role	purgeR-ped_rename	ok	5				
+string_ids	purgeR-ped_rename	ok	5				
+young_parent	purgeR-ped_rename	ok	5				
+zero_missing	purgeR-ped_rename	ok	5				
+both_roles_sexed	purgeR-ped_sort	ok	6				
+both_roles_unsexed	purgeR-ped_sort	ok	8				
+clean	purgeR-ped_sort	ok	5				
+cycle2_dam_only	purgeR-ped_sort	error		node stack overflow			
+cycle2_mixed	purgeR-ped_sort	error		node stack overflow			
+cycle3_mixed	purgeR-ped_sort	error		node stack overflow			
+dup_conflict_fewer_first	purgeR-ped_sort	error		There are repeated individual IDs			
+dup_conflict	purgeR-ped_sort	error		There are repeated individual IDs			
+dup_exact	purgeR-ped_sort	error		There are repeated individual IDs			
+missing_id	purgeR-ped_sort	error		missing value where TRUE/FALSE needed			
+missing_parent_both_roles	purgeR-ped_sort	ok	7				
+missing_sex_nonparent	purgeR-ped_sort	ok	5				
+missing_sex_parent	purgeR-ped_sort	ok	5				
+mother_eq_father	purgeR-ped_sort	ok	5				
+one_parent_known	purgeR-ped_sort	ok	5				
+own_parent	purgeR-ped_sort	error		Individuals cannot be born from themselves!			
+parent_born_after	purgeR-ped_sort	ok	5				
+parent_not_a_row	purgeR-ped_sort	ok	5				
+parents_after_offspring	purgeR-ped_sort	ok	5				
+sex_contradicts_role	purgeR-ped_sort	ok	5				
+string_ids	purgeR-ped_sort	ok	5				
+young_parent	purgeR-ped_sort	ok	5				
+zero_missing	purgeR-ped_sort	ok	5				
+both_roles_sexed	pedtools-ped	error		Malformed pedigree.  Individual 4 is male, but appear as the mother of 6			
+both_roles_unsexed	pedtools-ped	ok	8				
+clean	pedtools-ped	ok	5				
+cycle2_dam_only	pedtools-ped	error		Malformed pedigree.  Individual 1 is their own ancestor  Individual 3 is their own ancestor  Individual 4 is their own ancestor  Individual 5 is their own ancestor			
+cycle2_mixed	pedtools-ped	error		Malformed pedigree.  Individual 2 is their own ancestor  Individual 3 is their own ancestor  Individual 4 is their own ancestor  Individual 5 is their own ancestor			
+cycle3_mixed	pedtools-ped	error		Malformed pedigree.  Individual 10 is their own ancestor  Individual 11 is their own ancestor  Individual 12 is their own ancestor			
+dup_conflict_fewer_first	pedtools-ped	error		Duplicated entry in `id` vector: 4			
+dup_conflict	pedtools-ped	error		Duplicated entry in `id` vector: 4			
+dup_exact	pedtools-ped	error		Duplicated entry in `id` vector: 4			
+missing_id	pedtools-ped	ok	6				
+missing_parent_both_roles	pedtools-ped	error		`fid` entry does not appear in `id` vector: 9			
+missing_sex_nonparent	pedtools-ped	ok	5				
+missing_sex_parent	pedtools-ped	ok	5				
+mother_eq_father	pedtools-ped	error		Malformed pedigree.  Individual 4 is male, but appear as the mother of 5			
+one_parent_known	pedtools-ped	error		Malformed pedigree.  Individual 5 has exactly 1 parent; this is not allowed			
+own_parent	pedtools-ped	error		Malformed pedigree.  Individual 5 is their own ancestor			
+parent_born_after	pedtools-ped	ok	5				
+parent_not_a_row	pedtools-ped	error		`fid` entry does not appear in `id` vector: 9			
+parents_after_offspring	pedtools-ped	ok	5				
+sex_contradicts_role	pedtools-ped	error		Malformed pedigree.  Individual 2 is female, but appear as the father of 3			
+string_ids	pedtools-ped	ok	5				
+young_parent	pedtools-ped	ok	5				
+zero_missing	pedtools-ped	ok	5				
+both_roles_sexed	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 4 is male, but appear as the mother of 6			
+both_roles_unsexed	pedtools-as.ped-addMissingFounders	ok	8				
+clean	pedtools-as.ped-addMissingFounders	ok	5				
+cycle2_dam_only	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 1 is their own ancestor  Individual 3 is their own ancestor  Individual 4 is their own ancestor  Individual 5 is their own ancestor			
+cycle2_mixed	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 2 is their own ancestor  Individual 3 is their own ancestor  Individual 4 is their own ancestor  Individual 5 is their own ancestor			
+cycle3_mixed	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 10 is their own ancestor  Individual 11 is their own ancestor  Individual 12 is their own ancestor			
+dup_conflict_fewer_first	pedtools-as.ped-addMissingFounders	error		Duplicated entry in `id` vector: 4			
+dup_conflict	pedtools-as.ped-addMissingFounders	error		Duplicated entry in `id` vector: 4			
+dup_exact	pedtools-as.ped-addMissingFounders	error		Duplicated entry in `id` vector: 4			
+missing_id	pedtools-as.ped-addMissingFounders	ok	6				
+missing_parent_both_roles	pedtools-as.ped-addMissingFounders	ok	8				Adding missing bi-sex founders: 9
+missing_sex_nonparent	pedtools-as.ped-addMissingFounders	ok	5				
+missing_sex_parent	pedtools-as.ped-addMissingFounders	ok	5				
+mother_eq_father	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 4 is male, but appear as the mother of 5			
+one_parent_known	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 5 has exactly 1 parent; this is not allowed			
+own_parent	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 5 is their own ancestor			
+parent_born_after	pedtools-as.ped-addMissingFounders	ok	5				
+parent_not_a_row	pedtools-as.ped-addMissingFounders	ok	6				Adding missing male founders: 9
+parents_after_offspring	pedtools-as.ped-addMissingFounders	ok	5				
+sex_contradicts_role	pedtools-as.ped-addMissingFounders	error		Malformed pedigree.  Individual 2 is female, but appear as the father of 3			
+string_ids	pedtools-as.ped-addMissingFounders	ok	5				
+young_parent	pedtools-as.ped-addMissingFounders	ok	5				
+zero_missing	pedtools-as.ped-addMissingFounders	ok	5				
+both_roles_sexed	pedigreemm-editPed	ok	6				
+both_roles_unsexed	pedigreemm-editPed	ok	8				
+clean	pedigreemm-editPed	ok	5				
+cycle2_dam_only	pedigreemm-editPed	error		node stack overflow			
+cycle2_mixed	pedigreemm-editPed	error		node stack overflow			
+cycle3_mixed	pedigreemm-editPed	error		node stack overflow			
+dup_conflict_fewer_first	pedigreemm-editPed	error		factor level [5] is duplicated			
+dup_conflict	pedigreemm-editPed	error		factor level [6] is duplicated			
+dup_exact	pedigreemm-editPed	error		factor level [6] is duplicated			
+missing_id	pedigreemm-editPed	ok	6				
+missing_parent_both_roles	pedigreemm-editPed	ok	8				
+missing_sex_nonparent	pedigreemm-editPed	ok	5				
+missing_sex_parent	pedigreemm-editPed	ok	5				
+mother_eq_father	pedigreemm-editPed	ok	5				
+one_parent_known	pedigreemm-editPed	ok	5				
+own_parent	pedigreemm-editPed	error		node stack overflow			
+parent_born_after	pedigreemm-editPed	ok	5				
+parent_not_a_row	pedigreemm-editPed	ok	6				
+parents_after_offspring	pedigreemm-editPed	ok	5				
+sex_contradicts_role	pedigreemm-editPed	ok	5				
+string_ids	pedigreemm-editPed	ok	5				
+young_parent	pedigreemm-editPed	ok	5				
+zero_missing	pedigreemm-editPed	ok	6				
+both_roles_sexed	nprcgenekeepr-qcStudbook	error		4 : Subject(s) listed as both sire and dam			
+both_roles_unsexed	nprcgenekeepr-qcStudbook	error		6 : Subject(s) listed as both sire and dam			
+clean	nprcgenekeepr-qcStudbook	ok	5				
+cycle2_dam_only	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+cycle2_mixed	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+cycle3_mixed	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+dup_conflict_fewer_first	nprcgenekeepr-qcStudbook	error		Duplicate IDs with mismatched information present			
+dup_conflict	nprcgenekeepr-qcStudbook	error		Duplicate IDs with mismatched information present			
+dup_exact	nprcgenekeepr-qcStudbook	ok	5				
+missing_id	nprcgenekeepr-qcStudbook	ok	6				
+missing_parent_both_roles	nprcgenekeepr-qcStudbook	error		9 : Subject(s) listed as both sire and dam			
+missing_sex_nonparent	nprcgenekeepr-qcStudbook	ok	5				
+missing_sex_parent	nprcgenekeepr-qcStudbook	ok	5				
+mother_eq_father	nprcgenekeepr-qcStudbook	error		4 : Subject(s) listed as both sire and dam			
+one_parent_known	nprcgenekeepr-qcStudbook	ok	6				
+own_parent	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+parent_born_after	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+parent_not_a_row	nprcgenekeepr-qcStudbook	ok	6				
+parents_after_offspring	nprcgenekeepr-qcStudbook	ok	5				
+sex_contradicts_role	nprcgenekeepr-qcStudbook	ok	5				
+string_ids	nprcgenekeepr-qcStudbook	ok	5				
+young_parent	nprcgenekeepr-qcStudbook	error		Parents with low age at birth of offspring are listed in <tempdir>/lowParentAge.csv.			
+zero_missing	nprcgenekeepr-qcStudbook	error		0 : Subject(s) listed as both sire and dam			
+both_roles_sexed	nprcgenekeepr-qcStudbook-nobirth	error		4 : Subject(s) listed as both sire and dam			
+both_roles_unsexed	nprcgenekeepr-qcStudbook-nobirth	error		6 : Subject(s) listed as both sire and dam			
+clean	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+cycle2_dam_only	nprcgenekeepr-qcStudbook-nobirth	ok	6		findGeneration: 4 id(s) could not be assigned a generation; the pedigree may contain a cycle or a parent ID absent as an ego ID. Unplaced id(s): 1, 3, 4, 5		
+cycle2_mixed	nprcgenekeepr-qcStudbook-nobirth	ok	6		findGeneration: 4 id(s) could not be assigned a generation; the pedigree may contain a cycle or a parent ID absent as an ego ID. Unplaced id(s): 2, 3, 4, 5		
+cycle3_mixed	nprcgenekeepr-qcStudbook-nobirth	ok	10		findGeneration: 3 id(s) could not be assigned a generation; the pedigree may contain a cycle or a parent ID absent as an ego ID. Unplaced id(s): 10, 11, 12		
+dup_conflict_fewer_first	nprcgenekeepr-qcStudbook-nobirth	error		Duplicate IDs with mismatched information present			
+dup_conflict	nprcgenekeepr-qcStudbook-nobirth	error		Duplicate IDs with mismatched information present			
+dup_exact	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+missing_id	nprcgenekeepr-qcStudbook-nobirth	ok	6				
+missing_parent_both_roles	nprcgenekeepr-qcStudbook-nobirth	error		9 : Subject(s) listed as both sire and dam			
+missing_sex_nonparent	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+missing_sex_parent	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+mother_eq_father	nprcgenekeepr-qcStudbook-nobirth	error		4 : Subject(s) listed as both sire and dam			
+one_parent_known	nprcgenekeepr-qcStudbook-nobirth	ok	6				
+own_parent	nprcgenekeepr-qcStudbook-nobirth	ok	5		findGeneration: 1 id(s) could not be assigned a generation; the pedigree may contain a cycle or a parent ID absent as an ego ID. Unplaced id(s): 5		
+parent_born_after	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+parent_not_a_row	nprcgenekeepr-qcStudbook-nobirth	ok	6				
+parents_after_offspring	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+sex_contradicts_role	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+string_ids	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+young_parent	nprcgenekeepr-qcStudbook-nobirth	ok	5				
+zero_missing	nprcgenekeepr-qcStudbook-nobirth	error		0 : Subject(s) listed as both sire and dam			

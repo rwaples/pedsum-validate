@@ -1,0 +1,24 @@
+name	table_row	defect
+clean	control	no defect
+parent_not_a_row	Parent referenced but not a row	father 9 of id 5 has no row
+missing_parent_both_roles	Parent referenced but not a row	9 has no row and is the mother of 6 and the father of 7
+dup_exact	Duplicate ID	id 4 appears twice, identical rows
+dup_conflict	Duplicate ID	id 4 appears twice, the second row with no parents
+dup_conflict_fewer_first	Duplicate ID	id 4 appears twice, the first row with no parents (tells 'first row' from 'most parents')
+cycle2_mixed	Cycle / own ancestor	3 is the mother of 2, 2 is the father of 3
+cycle2_dam_only	Cycle / own ancestor	1 and 3 are each other's mother; 4 and 5 descend from the cycle
+cycle3_mixed	Cycle / own ancestor	separate 3-cycle 10 -(mother)-> 12 -(father)-> 11 -(mother)-> 10
+own_parent	Own parent	id 5 is its own mother
+mother_eq_father	Mother ID = father ID in the same row	id 5 has mother 4 and father 4 (4 is male)
+both_roles_unsexed	Individual used as both mother and father	unsexed 6 is the mother of 7 and the father of 8
+both_roles_sexed	Individual used as both mother and father	male 4 is the father of 5 and the mother of 6
+sex_contradicts_role	Recorded sex contradicts parent role	2 is recorded female and is only ever a father
+missing_sex_parent	Missing sex	mother 1 has no sex recorded
+missing_sex_nonparent	Missing sex	5, who has no offspring, has no sex recorded
+one_parent_known	Only one parent known	5 has a mother but no father
+parents_after_offspring	Parents listed after offspring	the core rows in reverse order
+zero_missing	Missing-parent codes	founders 1 and 2 have parents written 0; no row has id 0
+string_ids	ID type / renumbering	IDs A1..A5
+missing_id	Rows removed	a sixth row has no id
+parent_born_after	Parent born after offspring	3 is born 1980, before its parents (1990)
+young_parent	Parent born after offspring	5 is born 2001, one year after its parents (2000)

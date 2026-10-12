@@ -1,0 +1,7 @@
+id	mother	father	sex	birth_year
+1	3	20	F	1990
+2	NA	NA	M	1990
+3	1	2	F	2000
+4	1	2	M	2000
+5	3	4	F	2010
+20	NA	NA	M	1980
