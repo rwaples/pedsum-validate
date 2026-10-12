@@ -229,13 +229,12 @@ recursion, for every individual of these pedigrees:
   - `effective_size.yaml` rounds Ne to 4 decimals.
   - Exact comparisons read `annotated.tsv.gz`, or use a tolerance of 1e-4.
 - **Missing sex.**
-  - `validate` refuses any individual with unknown sex that never bred. That
-    affects dama (1), arrui (1), dorcas (7) and `deep_ped` (521 rows) unless
-    `--allow-missing-sex` is given.
-  - This is input policy (see issue rwaples/pedsum#7), not a difference in any computed
-    value. With the flag, every check on those pedigrees matches. pedsum's ADR 0006 plans to
-    drop the requirement for individuals that never bred; until rwaples/pedsum#25 lands, the
-    pinned pedsum still refuses them.
+  - `validate` keeps an individual with unknown sex that never bred, with sex 0
+    and a WARNING (pedsum ADR 0006, rwaples/pedsum#25). Before, it refused one
+    unless `--allow-missing-sex` was given, which 20 datasets here passed for
+    that alone. Dropping the flag changed no check's value or status.
+  - black_robin still passes the flag: 2 birds are used as both mother and
+    father, so their sex cannot come from a role (`sex_role_ambiguity`).
 - **Cleaning.** The R package that published a value may have cleaned the pedigree
   differently. [`cleaners/`](cleaners/README.md) runs eight R cleaners and pedsum on the
   same fixtures. The differences most likely to move a published count:
