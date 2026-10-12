@@ -37,8 +37,8 @@ plain, `--drop-offending`, `--allow-missing-sex` and `--no-sex-check`.
 
 `results/comparison.md` has one cell per fixture and program, and below it everything each program
 printed. Codes: `E` refused, `W` warned, `M` printed a message, `S` changed the pedigree silently, `ok`
-unchanged; then `+id` row added, `-id` row removed, `id:m/f` parents changed, `id:F>M` sex changed, `CYCLE`
-output still has a cycle.
+unchanged; then `+id` row added, `-id` row removed, `dup row(s) removed`, `id:m/f` parents changed,
+`id:F>M` sex changed, `reordered` rows in a different order, `CYCLE` output still has a cycle.
 
 ### Where the issue's table was wrong or incomplete
 
@@ -61,6 +61,7 @@ Running the code confirmed most of the issue's table. These cells changed:
 | ID type | pedsum | integers required | String IDs are accepted (pedsum#16). |
 | Parent born after offspring | pedsum | E, droppable | `keep_or_drop`: plain `validate` writes the pedigree and exits 1; `--drop-offending` removes the child. |
 | Missing ID | pedtools, pedigreemm, nprcgenekeepr | – | Keep a row with ID `NA` as an individual named `NA`. visPedigree and nadiv drop it with a warning. pedsum refuses, also under `--drop-offending`. |
+| Parents listed after offspring | pedtools `as.ped` | S sort (`reorder=TRUE`) | `as.ped(addMissingFounders = TRUE)` keeps the input order; only `ped()` sorts. |
 
 ### What only pedsum does
 

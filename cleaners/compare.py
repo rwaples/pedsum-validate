@@ -11,8 +11,9 @@ per fixture and program:
 - ``ok``: returned the pedigree unchanged and said nothing.
 
 followed by the changes: ``+id`` rows added, ``-id`` rows removed, duplicate rows removed or kept,
-``id:m/f`` parent links changed (to mother/father), ``id:sex`` sex changed, and
-``CYCLE`` when the output still contains a cycle. Parents written ``0`` in the
+``id:m/f`` parent links changed (to mother/father), ``id:sex`` sex changed,
+``reordered`` when the rows kept come out in a different order, and ``CYCLE``
+when the output still contains a cycle. Parents written ``0`` in the
 fixture count as missing for the diff, so ``zero_missing`` shows a link change
 only where a program kept ``0`` as an ID or added a row for it.
 
@@ -80,6 +81,11 @@ def changes(inp: Ped, inp_order: list[str], out: Ped, out_order: list[str]) -> l
     if dup_removed:
         parts.append(f"{dup_removed} dup row(s) removed")
     dup_out = len(out_order) - len(n_out)
+    # Relative order of the IDs in both, first occurrence each: sorting is a change.
+    shared_in = [i for i in dict.fromkeys(inp_order) if i in n_out]
+    shared_out = [i for i in dict.fromkeys(out_order) if i in n_in]
+    if shared_in != shared_out:
+        parts.append("reordered")
     if dup_out:
         parts.append(f"{dup_out} dup row(s) kept")
     for i in inp:
