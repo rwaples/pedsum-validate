@@ -25,6 +25,14 @@ if TYPE_CHECKING:
     from compare import Ped
 
 HERE = Path(__file__).parent
+
+# PedigWithErrors has a father written 0 with no row and two cycles, so each mode of run_pedsum.py
+# BLOCKs on one or the other; these combine the ADR 0006 options that clear both.
+COMBINED: dict[str, list[str]] = {
+    "token-0-drop": ["--missing-parent-token", "0", "--drop-offending"],
+    "token-0-break-cycles": ["--missing-parent-token", "0", "--break-cycles"],
+    "token-0-break-cycles-drop": ["--missing-parent-token", "0", "--break-cycles", "--drop-offending"],
+}
 WORK = HERE.parent / ".work" / "cleaners" / "PedigWithErrors"
 
 
@@ -63,7 +71,7 @@ def main() -> None:
     out, _ = load_ped(WORK / "prePed.tsv")
     rows["optiSel-prePed"] = counts(inp, out)
 
-    for mode, flags in MODES.items():
+    for mode, flags in {**MODES, **COMBINED}.items():
         name = f"pedsum-{mode}"
         record, ped_rows = validate(WORK / "input.tsv", WORK / name, flags)
         notes[name] = f"{record['outcome']}; failed: {record['failed_checks'] or 'none'}"

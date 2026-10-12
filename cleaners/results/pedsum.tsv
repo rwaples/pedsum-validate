@@ -7,10 +7,10 @@ cycle2_mixed	pedsum-plain	2	blocked		acyclic,birth_year_topology	cycle detected
 cycle3_mixed	pedsum-plain	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_conflict_fewer_first	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
-dup_exact	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_exact	pedsum-plain	1	fixed	5	duplicate_rows			
 missing_id	pedsum-plain	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-plain	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
-missing_sex_nonparent	pedsum-plain	2	blocked		unknown_sex	rows with unresolved sex; pass --allow-missing-sex to tolerate		
+missing_sex_nonparent	pedsum-plain	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
 missing_sex_parent	pedsum-plain	0	ok	5				
 mother_eq_father	pedsum-plain	2	blocked		parents_distinct,sex_role_consistency	rows with mother == father (cannot disambiguate)		
 one_parent_known	pedsum-plain	0	ok	5				
@@ -18,10 +18,10 @@ own_parent	pedsum-plain	2	blocked		acyclic,self_loops	cycle detected
 parent_born_after	pedsum-plain	1	fixed	5	birth_year_topology			
 parent_not_a_row	pedsum-plain	1	fixed	6	parent_refs_present_father			
 parents_after_offspring	pedsum-plain	0	ok	5				
-sex_contradicts_role	pedsum-plain	0	ok	5				
+sex_contradicts_role	pedsum-plain	1	fixed	5	sex_role_override			
 string_ids	pedsum-plain	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
 young_parent	pedsum-plain	0	ok	5				
-zero_missing	pedsum-plain	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F | rows with mother == father (cannot disambiguate)		
+zero_missing	pedsum-plain	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct,zero_parent_present	parent ID 0 has no row; if the file writes a missing parent as 0, pass --missing-parent-token 0 | sex conflict on missing parent(s); pass --no-sex-check to default to sex=F | rows with mother == father (cannot disambiguate)		
 both_roles_sexed	pedsum-drop	1	fixed	5	sex_role_consistency		4	--drop-offending removed 16.7% of rows; relatedness / Ne / founder counts reflect the reduced set
 both_roles_unsexed	pedsum-drop	1	fixed	7	sex_role_ambiguity		6	--drop-offending removed 12.5% of rows; relatedness / Ne / founder counts reflect the reduced set
 clean	pedsum-drop	0	ok	5				
@@ -30,10 +30,10 @@ cycle2_mixed	pedsum-drop	1	fixed	4	acyclic,birth_year_topology		2,3	--drop-offen
 cycle3_mixed	pedsum-drop	1	fixed	7	acyclic		10,11,12	--drop-offending removed 30.0% of rows; relatedness / Ne / founder counts reflect the reduced set
 dup_conflict	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
 dup_conflict_fewer_first	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
-dup_exact	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
+dup_exact	pedsum-drop	0	ok	5	duplicate_rows			
 missing_id	pedsum-drop	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-drop	1	fixed	7	parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict		9	
-missing_sex_nonparent	pedsum-drop	1	fixed	4	unknown_sex		5	--drop-offending removed 20.0% of rows; relatedness / Ne / founder counts reflect the reduced set
+missing_sex_nonparent	pedsum-drop	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
 missing_sex_parent	pedsum-drop	0	ok	5				
 mother_eq_father	pedsum-drop	1	fixed	3	parents_distinct,sex_role_consistency		4,5	--drop-offending removed 40.0% of rows; relatedness / Ne / founder counts reflect the reduced set
 one_parent_known	pedsum-drop	0	ok	5				
@@ -41,10 +41,10 @@ own_parent	pedsum-drop	1	fixed	4	acyclic,self_loops		5	--drop-offending removed 
 parent_born_after	pedsum-drop	1	fixed	4	birth_year_topology		3	--drop-offending removed 20.0% of rows; relatedness / Ne / founder counts reflect the reduced set
 parent_not_a_row	pedsum-drop	0	ok	6	parent_refs_present_father			
 parents_after_offspring	pedsum-drop	0	ok	5				
-sex_contradicts_role	pedsum-drop	0	ok	5				
+sex_contradicts_role	pedsum-drop	0	ok	5	sex_role_override			
 string_ids	pedsum-drop	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
 young_parent	pedsum-drop	0	ok	5				
-zero_missing	pedsum-drop	1	fixed	3	parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct		0,1,2	--drop-offending removed 40.0% of rows; relatedness / Ne / founder counts reflect the reduced set
+zero_missing	pedsum-drop	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct,zero_parent_present	parent ID 0 has no row; if the file writes a missing parent as 0, pass --missing-parent-token 0		
 both_roles_sexed	pedsum-allow-missing-sex	1	fixed	6	sex_role_consistency			
 both_roles_unsexed	pedsum-allow-missing-sex	0	ok	8				
 clean	pedsum-allow-missing-sex	0	ok	5				
@@ -53,10 +53,10 @@ cycle2_mixed	pedsum-allow-missing-sex	2	blocked		acyclic,birth_year_topology	cyc
 cycle3_mixed	pedsum-allow-missing-sex	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_conflict_fewer_first	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
-dup_exact	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_exact	pedsum-allow-missing-sex	1	fixed	5	duplicate_rows			
 missing_id	pedsum-allow-missing-sex	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-allow-missing-sex	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
-missing_sex_nonparent	pedsum-allow-missing-sex	0	ok	5				
+missing_sex_nonparent	pedsum-allow-missing-sex	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
 missing_sex_parent	pedsum-allow-missing-sex	0	ok	5				
 mother_eq_father	pedsum-allow-missing-sex	2	blocked		parents_distinct,sex_role_consistency	rows with mother == father (cannot disambiguate)		
 one_parent_known	pedsum-allow-missing-sex	0	ok	5				
@@ -64,10 +64,10 @@ own_parent	pedsum-allow-missing-sex	2	blocked		acyclic,self_loops	cycle detected
 parent_born_after	pedsum-allow-missing-sex	1	fixed	5	birth_year_topology			
 parent_not_a_row	pedsum-allow-missing-sex	1	fixed	6	parent_refs_present_father			
 parents_after_offspring	pedsum-allow-missing-sex	0	ok	5				
-sex_contradicts_role	pedsum-allow-missing-sex	0	ok	5				
+sex_contradicts_role	pedsum-allow-missing-sex	1	fixed	5	sex_role_override			
 string_ids	pedsum-allow-missing-sex	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
 young_parent	pedsum-allow-missing-sex	0	ok	5				
-zero_missing	pedsum-allow-missing-sex	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F | rows with mother == father (cannot disambiguate)		
+zero_missing	pedsum-allow-missing-sex	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct,zero_parent_present	parent ID 0 has no row; if the file writes a missing parent as 0, pass --missing-parent-token 0 | sex conflict on missing parent(s); pass --no-sex-check to default to sex=F | rows with mother == father (cannot disambiguate)		
 both_roles_sexed	pedsum-no-sex-check	1	fixed	6	sex_role_consistency			
 both_roles_unsexed	pedsum-no-sex-check	2	blocked		sex_role_ambiguity	present individual(s) with unknown sex used as BOTH mother and father (sex cannot be imputed); pass --allow-missing-sex to tolerate		
 clean	pedsum-no-sex-check	0	ok	5				
@@ -76,10 +76,10 @@ cycle2_mixed	pedsum-no-sex-check	2	blocked		acyclic,birth_year_topology	cycle de
 cycle3_mixed	pedsum-no-sex-check	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_conflict_fewer_first	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
-dup_exact	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_exact	pedsum-no-sex-check	1	fixed	5	duplicate_rows			
 missing_id	pedsum-no-sex-check	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-no-sex-check	1	fixed	8	parent_refs_present_father,parent_refs_present_mother			
-missing_sex_nonparent	pedsum-no-sex-check	2	blocked		unknown_sex	rows with unresolved sex; pass --allow-missing-sex to tolerate		
+missing_sex_nonparent	pedsum-no-sex-check	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
 missing_sex_parent	pedsum-no-sex-check	0	ok	5				
 mother_eq_father	pedsum-no-sex-check	2	blocked		parents_distinct,sex_role_consistency	rows with mother == father (cannot disambiguate)		
 one_parent_known	pedsum-no-sex-check	0	ok	5				
@@ -87,7 +87,53 @@ own_parent	pedsum-no-sex-check	2	blocked		acyclic,self_loops	cycle detected
 parent_born_after	pedsum-no-sex-check	1	fixed	5	birth_year_topology			
 parent_not_a_row	pedsum-no-sex-check	1	fixed	6	parent_refs_present_father			
 parents_after_offspring	pedsum-no-sex-check	0	ok	5				
-sex_contradicts_role	pedsum-no-sex-check	0	ok	5				
+sex_contradicts_role	pedsum-no-sex-check	1	fixed	5	sex_role_override			
 string_ids	pedsum-no-sex-check	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
 young_parent	pedsum-no-sex-check	0	ok	5				
-zero_missing	pedsum-no-sex-check	2	blocked		parent_refs_present_father,parent_refs_present_mother,parents_distinct	rows with mother == father (cannot disambiguate)		
+zero_missing	pedsum-no-sex-check	2	blocked		parent_refs_present_father,parent_refs_present_mother,parents_distinct,zero_parent_present	parent ID 0 has no row; if the file writes a missing parent as 0, pass --missing-parent-token 0 | rows with mother == father (cannot disambiguate)		
+both_roles_sexed	pedsum-missing-parent-token-0	1	fixed	6	sex_role_consistency			
+both_roles_unsexed	pedsum-missing-parent-token-0	2	blocked		sex_role_ambiguity	present individual(s) with unknown sex used as BOTH mother and father (sex cannot be imputed); pass --allow-missing-sex to tolerate		
+clean	pedsum-missing-parent-token-0	0	ok	5				
+cycle2_dam_only	pedsum-missing-parent-token-0	2	blocked		acyclic,birth_year_topology	cycle detected		
+cycle2_mixed	pedsum-missing-parent-token-0	2	blocked		acyclic,birth_year_topology	cycle detected		
+cycle3_mixed	pedsum-missing-parent-token-0	2	blocked		acyclic	cycle detected		
+dup_conflict	pedsum-missing-parent-token-0	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_conflict_fewer_first	pedsum-missing-parent-token-0	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_exact	pedsum-missing-parent-token-0	1	fixed	5	duplicate_rows			
+missing_id	pedsum-missing-parent-token-0	2	blocked		id_dtype	id_dtype		
+missing_parent_both_roles	pedsum-missing-parent-token-0	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
+missing_sex_nonparent	pedsum-missing-parent-token-0	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
+missing_sex_parent	pedsum-missing-parent-token-0	0	ok	5				
+mother_eq_father	pedsum-missing-parent-token-0	2	blocked		parents_distinct,sex_role_consistency	rows with mother == father (cannot disambiguate)		
+one_parent_known	pedsum-missing-parent-token-0	0	ok	5				
+own_parent	pedsum-missing-parent-token-0	2	blocked		acyclic,self_loops	cycle detected		
+parent_born_after	pedsum-missing-parent-token-0	1	fixed	5	birth_year_topology			
+parent_not_a_row	pedsum-missing-parent-token-0	1	fixed	6	parent_refs_present_father			
+parents_after_offspring	pedsum-missing-parent-token-0	0	ok	5				
+sex_contradicts_role	pedsum-missing-parent-token-0	1	fixed	5	sex_role_override			
+string_ids	pedsum-missing-parent-token-0	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
+young_parent	pedsum-missing-parent-token-0	0	ok	5				
+zero_missing	pedsum-missing-parent-token-0	0	ok	5				
+both_roles_sexed	pedsum-break-cycles	1	fixed	6	sex_role_consistency			
+both_roles_unsexed	pedsum-break-cycles	2	blocked		sex_role_ambiguity	present individual(s) with unknown sex used as BOTH mother and father (sex cannot be imputed); pass --allow-missing-sex to tolerate		
+clean	pedsum-break-cycles	0	ok	5				
+cycle2_dam_only	pedsum-break-cycles	1	fixed	6	cycle_breaks			
+cycle2_mixed	pedsum-break-cycles	1	fixed	6	cycle_breaks			
+cycle3_mixed	pedsum-break-cycles	2	blocked		acyclic	cycle detected		
+dup_conflict	pedsum-break-cycles	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_conflict_fewer_first	pedsum-break-cycles	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_exact	pedsum-break-cycles	1	fixed	5	duplicate_rows			
+missing_id	pedsum-break-cycles	2	blocked		id_dtype	id_dtype		
+missing_parent_both_roles	pedsum-break-cycles	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
+missing_sex_nonparent	pedsum-break-cycles	0	ok	5				kept 1 individual(s) with unknown sex who are never parents (sex 0); effective-size refuses its sex-dependent estimators while any row is unsexed
+missing_sex_parent	pedsum-break-cycles	0	ok	5				
+mother_eq_father	pedsum-break-cycles	2	blocked		parents_distinct,sex_role_consistency	rows with mother == father (cannot disambiguate)		
+one_parent_known	pedsum-break-cycles	0	ok	5				
+own_parent	pedsum-break-cycles	1	fixed	5	cycle_breaks			
+parent_born_after	pedsum-break-cycles	1	fixed	5	birth_year_topology			
+parent_not_a_row	pedsum-break-cycles	1	fixed	6	parent_refs_present_father			
+parents_after_offspring	pedsum-break-cycles	0	ok	5				
+sex_contradicts_role	pedsum-break-cycles	1	fixed	5	sex_role_override			
+string_ids	pedsum-break-cycles	0	ok	5				IDs read as strings, since some tokens are not plain integers (e.g. ['A1', 'A2', 'A3', 'A4', 'A5']); two tokens are the same ID only if they are the same string, so 001 and 1 differ
+young_parent	pedsum-break-cycles	0	ok	5				
+zero_missing	pedsum-break-cycles	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict,parents_distinct,zero_parent_present	parent ID 0 has no row; if the file writes a missing parent as 0, pass --missing-parent-token 0 | sex conflict on missing parent(s); pass --no-sex-check to default to sex=F | rows with mother == father (cannot disambiguate)		

@@ -1,0 +1,6 @@
+id	mother	father	sex
+2	NA	NA	M
+1	NA	NA	F
+4	1	2	M
+3	1	2	F
+5	3	4	F
