@@ -21,7 +21,8 @@
 #   columns                 {id, mother, father, sex?}: the source columns
 #   missing_parent          tokens meaning "no parent" (R NA always does)
 #   sex_map                 source sex code -> PLINK code: 1 (male) or 2 (female)
-#   allow_missing_sex       pass --allow-missing-sex to validate and summarize
+#   allow_missing_sex       pass --allow-missing-sex to validate and summarize (needed
+#                           only for an unsexed individual used as both mother and father)
 #   reference_column        a 0/1 column marking the reference population;
 #                           the dataset then also runs effective-size
 #                           --reference-col
@@ -94,7 +95,6 @@ datasets:
     columns: {id: id, mother: dam, father: sire, sex: sex}
     missing_parent: ["0"]
     sex_map: {M: 1, F: 2}
-    allow_missing_sex: true  # 1 animal(s) with NA sex and no offspring
     reference_column: target
   arrui:
     url: https://raw.githubusercontent.com/cran/purgeR/5f3c193e7c0f579dec6e8b981f75a0cb8929ba0d/data/arrui.rda
@@ -103,7 +103,6 @@ datasets:
     columns: {id: id, mother: dam, father: sire, sex: sex}
     missing_parent: ["0"]
     sex_map: {M: 1, F: 2}
-    allow_missing_sex: true  # 1 animal(s) with NA sex and no offspring
     reference_column: target
   dorcas:
     url: https://raw.githubusercontent.com/cran/purgeR/5f3c193e7c0f579dec6e8b981f75a0cb8929ba0d/data/dorcas.rda
@@ -112,7 +111,6 @@ datasets:
     columns: {id: id, mother: dam, father: sire, sex: sex}
     missing_parent: ["0"]
     sex_map: {M: 1, F: 2}
-    allow_missing_sex: true  # 7 animal(s) with NA sex and no offspring
     reference_column: target
   darwin:
     url: https://raw.githubusercontent.com/cran/purgeR/5f3c193e7c0f579dec6e8b981f75a0cb8929ba0d/data/darwin.rda
@@ -121,7 +119,6 @@ datasets:
     columns: {id: Individual, mother: Mother, father: Father}
     # The file deliberately mixes missing-parent spellings.
     missing_parent: ["0", "Unknown", "unknown", "unk", "UNK"]
-    allow_missing_sex: true
   genea140:
     url: https://raw.githubusercontent.com/cran/GENLIB/84a2a9919feb864f3d30a83131a9efa74d14812e/data/genea140.rda
     sha256: 4da7a8c66612dca1b810ff55295a08a4d5999a8eeb1c3bd13410c5bf9b3e5b1d
@@ -136,21 +133,18 @@ datasets:
     columns: {id: Ind, mother: Dam, father: Sire, sex: Sex}
     missing_parent: ["0"]
     sex_map: {Male: 1, Female: 2}
-    allow_missing_sex: true  # 521 rows with blank sex
   mrode2:
     url: https://raw.githubusercontent.com/cran/nadiv/87dd7d0f9234668d2cc2cfd9830c282a3f1b35ed/data/Mrode2.rda
     sha256: 4f89c9839f383df760f7e057058005f698cb0b3e0b843ca41193b003ad9a1e29
     object: Mrode2
     columns: {id: id, mother: dam, father: sire}
     missing_parent: []
-    allow_missing_sex: true
   btped:
     url: https://raw.githubusercontent.com/cran/MCMCglmm/da5f2903e7ced4166e475ccdfae6d020672986ba/data/BTped.tab.gz
     sha256: c16874d886b1d26892373b269cdd06b62d42c387f3c6e65d5bc0e7fbd6593ead
     format: whitespace_table
     columns: {id: animal, mother: dam, father: sire}
     missing_parent: []
-    allow_missing_sex: true
 
   red_deer:
     # Figshare 10.6084/m9.figshare.25053941.v1 (CC BY 4.0), the pedigree of Hewett et al. 2024.
@@ -161,7 +155,6 @@ datasets:
     format: csv
     columns: {id: Code, mother: MumCode, father: Sire}
     missing_parent: []
-    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
   # Boichard, Maignel & Verrier 1997, figure 2, as typed in for PyPedal's unit tests.
   # Columns are animal, sire, dam, generation (pyp_tests.py pedformat 'asdg').
   boichard2:
@@ -172,7 +165,6 @@ datasets:
     names: [animal, sire, dam, gen]
     columns: {id: animal, mother: dam, father: sire}
     missing_parent: ["0"]
-    allow_missing_sex: true
   boichard2a:
     url: https://downloads.sourceforge.net/project/pypedal/pypedal-2.0.0/2.0.3/PyPedal-2.0.3.tar.gz
     sha256: c2f66af3f858279f06cb72da11c8620311abca405fc5292bdc782ee12de2362a
@@ -181,7 +173,6 @@ datasets:
     names: [animal, sire, dam, gen]
     columns: {id: animal, mother: dam, father: sire}
     missing_parent: ["0"]
-    allow_missing_sex: true
   boichard2b:
     url: https://downloads.sourceforge.net/project/pypedal/pypedal-2.0.0/2.0.3/PyPedal-2.0.3.tar.gz
     sha256: c2f66af3f858279f06cb72da11c8620311abca405fc5292bdc782ee12de2362a
@@ -190,7 +181,6 @@ datasets:
     names: [animal, sire, dam, gen]
     columns: {id: animal, mother: dam, father: sire}
     missing_parent: ["0"]
-    allow_missing_sex: true
 
   ancien_regime:
     # Kinsources dataset 53 (CC BY-NC-ND 3.0), IUR text export; statistics on the dataset page are Puck's.
@@ -200,7 +190,6 @@ datasets:
     columns: {id: Id, mother: MotherId, father: FatherId, sex: Gender}
     missing_parent: ["0"]
     sex_map: {H: 1, F: 2}
-    allow_missing_sex: true  # 32 individuals with Gender X
 
   soay_ped1:
     # Bérénos et al. 2014, Dryad 10.5061/dryad.367s2 (CC0), pedigree1dryad.txt: Pedigree 1
@@ -211,7 +200,6 @@ datasets:
     format: whitespace_table
     columns: {id: ID, mother: MUMID, father: FATHER}
     missing_parent: []
-    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
     reference_values:
       asreml:  # inversepedigree1.RData: ASReml-R asreml.Ainverse of this pedigree
         dryad_file: 100169
@@ -225,7 +213,6 @@ datasets:
     format: whitespace_table
     columns: {id: ID, mother: MUMID, father: FATHER}
     missing_parent: []
-    allow_missing_sex: true
     reference_values:
       asreml:  # inversepedigree2.RData: ASReml-R asreml.Ainverse of this pedigree
         dryad_file: 100170
@@ -241,7 +228,6 @@ datasets:
     format: whitespace_table
     columns: {id: id, mother: dam, father: sire}
     missing_parent: []
-    allow_missing_sex: true  # no sex column
     reference_values:
       genotyped:  # Data.txt: the 3,116 genotyped birds of the study. FROH is read only because
         # every genotyped bird has one; the checks count these birds, not compare FROH with F.
@@ -261,7 +247,6 @@ datasets:
     format: ainv_list
     columns: {id: id, mother: mother, father: father}
     missing_parent: []
-    allow_missing_sex: true
     reference_values:
       f_coeff:  # the authors' f for the 2,821 fitness-phenotyped birds
         dryad_file: 29887
@@ -286,7 +271,9 @@ datasets:
     format: csv
     columns: {id: IndividualID, mother: DamID, father: SireID}
     missing_parent: []  # R NA
-    allow_missing_sex: true  # no sex column; validate infers parents' sex from their role
+    # No sex column: validate sexes each parent from its role, but 2 birds are used as both mother
+    # and father (sex_role_ambiguity), which blocks without the flag.
+    allow_missing_sex: true
     reference_values:
       kennedy_F: {column: IndividualF}
       weiser_F: {dryad_file: 39818, sha256: 1e14f96ea94aff5a73426670e03854ff01ee7f9e35e8fe0c4cf6bace1811f49e, format: csv, id_column: individual, value_column: F}
@@ -300,7 +287,6 @@ datasets:
     columns: {id: ID, mother: DAM_ID, father: SIRE_ID, sex: SEX}
     missing_parent: ["*"]
     sex_map: {MALE: 1, FEMALE: 2}
-    allow_missing_sex: true  # 273 rows with SEX "*"
     reference_values:
       makeA_F: {dryad_file: 3900192, sha256: 7e8080c0aadc9281810320a49900f0cef09eabb79ad1b4767e47822e9c3f4891, format: square_matrix_diagonal, subtract: 1}
   seychelles_warbler:
@@ -311,7 +297,6 @@ datasets:
     format: csv
     columns: {id: id, mother: mum, father: dad}
     missing_parent: []  # R NA
-    allow_missing_sex: true  # no sex column
   arctic_fox:
     # Dryad 10.5061/dryad.6g8t8 (CC0), "Submitted to Dryad.xlsx" (sheet Blad1) of Noren et al. 2016:
     # ID, Sex (m/f/NA), F, Sire, Dam, 0 = unknown. Sires Male1-Male4 and "1" have no row.
@@ -321,7 +306,6 @@ datasets:
     columns: {id: ID, mother: Dam, father: Sire, sex: Sex}
     missing_parent: ["0"]
     sex_map: {m: 1, f: 2}
-    allow_missing_sex: true  # 1 animal with Sex NA
     # Fox5, an adult with no birth year or litter, lists Male1 x Fox5 (her own litter's parents):
     # an individual as its own dam, which summarize refuses. Treated as a founder.
     parent_overrides: {Fox5: {mother: null, father: null}}
@@ -344,7 +328,6 @@ datasets:
     columns: {id: Fishname, mother: Dam, father: Sire, sex: Sex}
     missing_parent: [""]
     sex_map: {Male: 1, Female: 2}
-    allow_missing_sex: true  # 6 fish with blank Sex, none of them parents
   peromyscus:
     # Dryad 10.5061/dryad.8q153 (CC0), pedigree.txt: tab-separated, CR line endings,
     # columns ID SEX F TREATMENT GEN DAM SIRE GNAW FLIP; 0 = unknown parent. F is the

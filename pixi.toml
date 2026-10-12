@@ -14,7 +14,7 @@ python = "3.14.*"
 ruff = "0.16.*"
 
 [pypi-dependencies]
-pedsum = { git = "https://github.com/rwaples/pedsum.git", rev = "542ef12759a63720210068531c26193da10a4182" }
+pedsum = { git = "https://github.com/rwaples/pedsum.git", rev = "ebcf00c6e0ce14f34b24899c3831a5ebf94d2672" }
 rdata = "*"
 openpyxl = "*"
 

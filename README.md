@@ -137,11 +137,12 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
   tolerance of 1e-4.
 - **Ne over all rows.** purgeR keeps rows with `t ≤ 1` and counts them as ΔF = 0,
   giving 8.18 for atlas. `pedigree_graph` drops those rows, giving 8.03 (gap D2).
-- **Missing sex blocks real pedigrees.** `validate` refuses any individual with
-  unknown sex that is not a parent. That rejects dama (1 animal), arrui (1),
-  dorcas (7) and deep_ped (521 rows) unless `--allow-missing-sex` is passed,
-  which this harness does for those datasets. See issue rwaples/pedsum#7. `effective-size`
-  now refuses unknown sex only for the three estimators that use it, so
+- **Missing sex.** `validate` keeps an individual with unknown sex that is not a
+  parent, with sex 0 and a WARNING (pedsum ADR 0006, rwaples/pedsum#25). Before,
+  it refused one, and 20 datasets here needed `--allow-missing-sex` for that
+  alone, from 1 animal in dama to 4,691 in soay_ped2. Only black_robin still passes the
+  flag, for 2 birds used as both mother and father. `effective-size` refuses
+  unknown sex only for the three estimators that use it, so
   `ne_individual_delta_f` runs on these studbooks.
 - **Rum red deer.** pedsum's F on the Figshare pedigree equals an independent
   tabular-method recomputation, but 50% of calves with both parents and a

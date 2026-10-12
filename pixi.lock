@@ -38,7 +38,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/ca-certificates-2026.7.22-hbd8a1cb_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.14-9_cp314.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
-      - pypi: git+https://github.com/rwaples/pedsum.git?rev=542ef12759a63720210068531c26193da10a4182#542ef12759a63720210068531c26193da10a4182
+      - pypi: git+https://github.com/rwaples/pedsum.git?rev=ebcf00c6e0ce14f34b24899c3831a5ebf94d2672#ebcf00c6e0ce14f34b24899c3831a5ebf94d2672
       - pypi: https://files.pythonhosted.org/packages/28/de/0999a0ccb672570ef4da6f3caf8398d8cea201456156ec1c6e4947b9d315/pg_phenotype-0.3.0-cp313-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/29/ef/acc15553b522a3710837520a76556958d533753d27e5ead18a8600159398/rdata-1.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/3d/5f/2bd2fd4b99b0b5e76fea2f1fe149e05a7ec19a9a177758688bb82c7e3126/numba-0.68.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
@@ -3679,7 +3679,7 @@ packages:
   run_exports: {}
   size: 118849
   timestamp: 1784250406640
-- pypi: git+https://github.com/rwaples/pedsum.git?rev=542ef12759a63720210068531c26193da10a4182#542ef12759a63720210068531c26193da10a4182
+- pypi: git+https://github.com/rwaples/pedsum.git?rev=ebcf00c6e0ce14f34b24899c3831a5ebf94d2672#ebcf00c6e0ce14f34b24899c3831a5ebf94d2672
   name: pedsum
   version: 0.14.0
   requires_dist:
