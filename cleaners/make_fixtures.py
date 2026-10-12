@@ -49,6 +49,11 @@ FIXTURES: dict[str, tuple[str, str, list[tuple[str, ...]]]] = {
         "id 4 appears twice, the second row with no parents",
         [*CORE, ("4", "NA", "NA", "M", "2000")],
     ),
+    "dup_conflict_fewer_first": (
+        "Duplicate ID",
+        "id 4 appears twice, the first row with no parents (tells 'first row' from 'most parents')",
+        [*CORE[:3], ("4", "NA", "NA", "M", "2000"), CORE[3], CORE[4]],
+    ),
     # Founders 20 (M) and 21 (F) give every cycle member two parents, so a
     # program that rejects half-founders still has to look at the cycle.
     "cycle2_mixed": (

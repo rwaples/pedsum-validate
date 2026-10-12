@@ -233,8 +233,9 @@ recursion, for every individual of these pedigrees:
     affects dama (1), arrui (1), dorcas (7) and `deep_ped` (521 rows) unless
     `--allow-missing-sex` is given.
   - This is input policy (see issue rwaples/pedsum#7), not a difference in any computed
-    value. With the flag, every check on those pedigrees matches. ADR 0006 in pedsum drops
-    the requirement for individuals that never bred (rwaples/pedsum#25).
+    value. With the flag, every check on those pedigrees matches. pedsum's ADR 0006 plans to
+    drop the requirement for individuals that never bred; until rwaples/pedsum#25 lands, the
+    pinned pedsum still refuses them.
 - **Cleaning.** The R package that published a value may have cleaned the pedigree
   differently. [`cleaners/`](cleaners/README.md) runs eight R cleaners and pedsum on the
   same fixtures. The differences most likely to move a published count:

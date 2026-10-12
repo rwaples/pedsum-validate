@@ -6,6 +6,7 @@ cycle2_dam_only	pedsum-plain	2	blocked		acyclic,birth_year_topology	cycle detect
 cycle2_mixed	pedsum-plain	2	blocked		acyclic,birth_year_topology	cycle detected		
 cycle3_mixed	pedsum-plain	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_conflict_fewer_first	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_exact	pedsum-plain	2	blocked		duplicate_ids	duplicate IDs detected		
 missing_id	pedsum-plain	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-plain	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
@@ -28,6 +29,7 @@ cycle2_dam_only	pedsum-drop	1	fixed	4	acyclic,birth_year_topology		1,3	--drop-of
 cycle2_mixed	pedsum-drop	1	fixed	4	acyclic,birth_year_topology		2,3	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
 cycle3_mixed	pedsum-drop	1	fixed	7	acyclic		10,11,12	--drop-offending removed 30.0% of rows; relatedness / Ne / founder counts reflect the reduced set
 dup_conflict	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
+dup_conflict_fewer_first	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
 dup_exact	pedsum-drop	1	fixed	4	duplicate_ids		4	--drop-offending removed 33.3% of rows; relatedness / Ne / founder counts reflect the reduced set
 missing_id	pedsum-drop	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-drop	1	fixed	7	parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict		9	
@@ -50,6 +52,7 @@ cycle2_dam_only	pedsum-allow-missing-sex	2	blocked		acyclic,birth_year_topology	
 cycle2_mixed	pedsum-allow-missing-sex	2	blocked		acyclic,birth_year_topology	cycle detected		
 cycle3_mixed	pedsum-allow-missing-sex	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_conflict_fewer_first	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_exact	pedsum-allow-missing-sex	2	blocked		duplicate_ids	duplicate IDs detected		
 missing_id	pedsum-allow-missing-sex	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-allow-missing-sex	2	blocked		parent_refs_present_father,parent_refs_present_mother,parent_refs_sex_conflict	sex conflict on missing parent(s); pass --no-sex-check to default to sex=F		
@@ -72,6 +75,7 @@ cycle2_dam_only	pedsum-no-sex-check	2	blocked		acyclic,birth_year_topology	cycle
 cycle2_mixed	pedsum-no-sex-check	2	blocked		acyclic,birth_year_topology	cycle detected		
 cycle3_mixed	pedsum-no-sex-check	2	blocked		acyclic	cycle detected		
 dup_conflict	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
+dup_conflict_fewer_first	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
 dup_exact	pedsum-no-sex-check	2	blocked		duplicate_ids	duplicate IDs detected		
 missing_id	pedsum-no-sex-check	2	blocked		id_dtype	id_dtype		
 missing_parent_both_roles	pedsum-no-sex-check	1	fixed	8	parent_refs_present_father,parent_refs_present_mother			

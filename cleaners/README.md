@@ -73,10 +73,12 @@ Running the code confirmed most of the issue's table. These cells changed:
 
 ### optiSel::PedigWithErrors
 
-`results/PedigWithErrors.md`. prePed keeps all 10,863 rows, adds 2 founders, clears 4 parent links (two
-loops) and changes 1 sex. Plain pedsum BLOCKs on the cycles; `--drop-offending` removes 7 rows (cycle
-members, the self-loop and children born before a parent) and adds 3 founders. One of the 3 is ID `0`:
-the dataset has one father written `0`, which prePed reads as missing and pedsum reads as an individual.
+`results/PedigWithErrors.md`, with parents compared as written. prePed keeps all 10,863 rows, adds 2
+founders, clears 5 parent links (4 to break two loops, plus one father written `0`, which it reads as
+missing) and changes 1 sex. Plain pedsum BLOCKs on the cycles; `--drop-offending` removes 7 rows (cycle
+members, the self-loop and children born before a parent), clears 8 links to them and adds 3 founders.
+One of the 3 is an individual named `0`, for that same father. The results have 2,444 founders after
+prePed and 2,443 after pedsum.
 
 ### Suspected bugs in other packages
 

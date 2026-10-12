@@ -6,17 +6,20 @@ cleaners/results/PedigWithErrors.md: per program, the rows in and out, the
 rows added and removed, the parent links cleared or changed, the sexes
 changed, and the founder and half-founder counts of the result.
 
+Parents are compared as written: the input's one father written ``0`` counts
+as a cleared link where a program read it as missing (prePed), and as a kept
+link to an added founder named ``0`` where it did not (pedsum).
+
 Run: pixi run cleaners-pwe (after pixi run -e r cleaners-pwe-r)
 """
 
 from __future__ import annotations
 
-import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from compare import has_cycle, load_ped
-from run_pedsum import MODES, OUTCOME, normalize, read_tsv
+from run_pedsum import MODES, validate
 
 if TYPE_CHECKING:
     from compare import Ped
@@ -54,26 +57,21 @@ def counts(inp: Ped, out: Ped) -> dict[str, object]:
 
 def main() -> None:
     """Run pedsum on the export and write results/PedigWithErrors.md."""
-    inp, _ = load_ped(WORK / "input.tsv", fixture=True)
+    inp, _ = load_ped(WORK / "input.tsv")
     rows: dict[str, dict[str, object]] = {"input": counts(inp, inp)}
     notes: dict[str, str] = {"optiSel-prePed": (WORK / "prePed.messages.txt").read_text().strip()}
-    out, _ = load_ped(WORK / "prePed.tsv", fixture=True)
+    out, _ = load_ped(WORK / "prePed.tsv")
     rows["optiSel-prePed"] = counts(inp, out)
 
     for mode, flags in MODES.items():
-        dest = WORK / f"pedsum-{mode}"
-        cmd = ["pedsum", "validate", "--in", str(WORK / "input.tsv"), "--out", str(dest), "-q"]
-        cmd += ["--birth-year-col", "birth_year", *flags]
-        proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
         name = f"pedsum-{mode}"
-        fails = sorted({r["check"] for r in read_tsv(dest / "validate.log")})
-        blocked = [ln.strip()[2:] for ln in proc.stderr.splitlines() if ln.startswith("  - ")]
-        notes[name] = f"{OUTCOME.get(proc.returncode, proc.returncode)}; failed: {', '.join(fails) or 'none'}"
-        if blocked:
-            notes[name] += f"; BLOCKED: {' | '.join(blocked)}"
+        record, ped_rows = validate(WORK / "input.tsv", WORK / name, flags)
+        notes[name] = f"{record['outcome']}; failed: {record['failed_checks'] or 'none'}"
+        if record["blocked"]:
+            notes[name] += f"; BLOCKED: {record['blocked']}"
+        if record["outcome"] in ("blocked", "error"):
             continue
-        ped = {r["id"]: (r["mother"], r["father"], r["sex"]) for r in normalize(dest / "validate.tsv.gz")}
-        rows[name] = counts(inp, ped)
+        rows[name] = counts(inp, {r["id"]: (r["mother"], r["father"], r["sex"]) for r in ped_rows})
 
     keys = list(rows["input"])
     lines = [

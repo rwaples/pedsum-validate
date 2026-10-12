@@ -4,13 +4,13 @@ Reads the run records (results/r.tsv, results/pedsum.tsv) and each program's
 normalized output, diffs the output against the fixture, and writes one cell
 per fixture and program:
 
-- ``E``: refused (an R error; pedsum exit 2, BLOCKED).
-- ``W``: returned a pedigree with a warning (pedsum: exit 1, a finding in validate.log).
+- ``E``: refused or crashed (an R error; pedsum BLOCKED, or a crash).
+- ``W``: returned a pedigree with a warning (pedsum: a finding in validate.log, or a WARNING).
 - ``M``: returned a pedigree and printed a message.
 - ``S``: returned a changed pedigree and said nothing.
 - ``ok``: returned the pedigree unchanged and said nothing.
 
-followed by the changes: ``+id`` rows added, ``-id`` rows removed,
+followed by the changes: ``+id`` rows added, ``-id`` rows removed, duplicate rows removed or kept,
 ``id:m/f`` parent links changed (to mother/father), ``id:sex`` sex changed, and
 ``CYCLE`` when the output still contains a cycle. Parents written ``0`` in the
 fixture count as missing for the diff, so ``zero_missing`` shows a link change
@@ -22,6 +22,7 @@ Run: pixi run cleaners-compare (after cleaners-r and cleaners-pedsum)
 from __future__ import annotations
 
 import csv
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -34,21 +35,20 @@ Ped = dict[str, tuple[str, str, str]]  # id -> (mother, father, sex)
 def read_rows(path: Path) -> list[dict[str, str]]:
     """Rows of a TSV as dicts."""
     with path.open() as fh:
-        return list(csv.DictReader(fh, delimiter="\t"))
+        return list(csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def load_ped(path: Path, *, fixture: bool) -> tuple[Ped, list[str]]:
-    """The pedigree keyed by id, and every id in row order (duplicates kept)."""
+def load_ped(path: Path, *, zero_is_missing: bool = False) -> tuple[Ped, list[str]]:
+    """The pedigree keyed by id, and every id in row order (duplicates kept).
+
+    Sex is M, F, ``-`` (a program with no sex) or U for anything else.
+    """
     ped: Ped = {}
     order = []
     for r in read_rows(path):
-        sex = (
-            (r["sex"] if r["sex"] in ("M", "F", "-") else "U")
-            if not fixture
-            else (r["sex"] if r["sex"] != "NA" else "U")
-        )
+        sex = r["sex"] if r["sex"] in ("M", "F", "-") else "U"
         mother, father = r["mother"], r["father"]
-        if fixture:
+        if zero_is_missing:
             mother, father = ("NA" if v == "0" else v for v in (mother, father))
         ped.setdefault(r["id"], (mother, father, sex))
         order.append(r["id"])
@@ -70,13 +70,18 @@ def has_cycle(ped: Ped) -> bool:
     return any(i not in state and visit(i) for i in ped)
 
 
-def changes(inp: Ped, out: Ped, out_order: list[str]) -> list[str]:
-    """What the program changed: rows added and removed, parent links, sexes, cycles left."""
+def changes(inp: Ped, inp_order: list[str], out: Ped, out_order: list[str]) -> list[str]:
+    """What the program changed: rows added and removed, duplicates, parent links, sexes, cycles left."""
     parts = [f"+{i}" for i in out if i not in inp]
     parts += [f"-{i}" for i in inp if i not in out]
-    dup_left = len(out_order) - len(set(out_order))
-    if dup_left:
-        parts.append(f"{dup_left} dup row(s) kept")
+    # Copies removed of an ID that survives; an ID removed entirely already shows as -id.
+    n_in, n_out = Counter(inp_order), Counter(out_order)
+    dup_removed = sum(n_in[i] - n_out[i] for i in n_in if n_in[i] > 1 and n_out[i] >= 1)
+    if dup_removed:
+        parts.append(f"{dup_removed} dup row(s) removed")
+    dup_out = len(out_order) - len(n_out)
+    if dup_out:
+        parts.append(f"{dup_out} dup row(s) kept")
     for i in inp:
         if i not in out:
             continue
@@ -94,10 +99,10 @@ def changes(inp: Ped, out: Ped, out_order: list[str]) -> list[str]:
 
 def signal(rec: dict[str, str], changed: bool) -> str:
     """How the program reported its run: E, W, M, S or ok."""
-    if rec["program"].startswith("pedsum"):
-        return {"blocked": "E", "fixed": "W"}.get(rec["outcome"], "S" if changed else "ok")
-    if rec["outcome"] == "error":
+    if rec["outcome"] in ("error", "blocked"):
         return "E"
+    if rec["program"].startswith("pedsum"):
+        return "W" if rec["failed_checks"] or rec["warnings"] else "S" if changed else "ok"
     if rec["warnings"]:
         return "W"
     if rec["messages"] or rec["printed"]:
@@ -114,12 +119,12 @@ def main() -> None:
     details: list[str] = []
     for rec in records:
         name, prog = rec["fixture"], rec["program"]
-        inp, _ = load_ped(FIXTURES / f"{name}.tsv", fixture=True)
+        inp, inp_order = load_ped(FIXTURES / f"{name}.tsv", zero_is_missing=True)
         out_path = RESULTS / prog / f"{name}.tsv"
         diff: list[str] = []
-        if out_path.exists() and rec["outcome"] != "error" and rec["outcome"] != "blocked":
-            out, order = load_ped(out_path, fixture=False)
-            diff = changes(inp, out, order)
+        if out_path.exists() and rec["outcome"] not in ("error", "blocked"):
+            out, order = load_ped(out_path)
+            diff = changes(inp, inp_order, out, order)
         sig = signal(rec, bool(diff))
         cells[name, prog] = " ".join([sig, *diff])
         said = {
@@ -127,7 +132,8 @@ def main() -> None:
             for k in ("error", "warnings", "messages", "printed", "blocked", "failed_checks", "dropped")
             if rec.get(k)
         }
-        details.append(f"| {name} | {prog} | {cells[name, prog]} | {'; '.join(f'{k}: {v}' for k, v in said.items())} |")
+        output = "; ".join(f"{k}: {v}" for k, v in said.items()).replace("|", "\\|")  # a | would split the cell
+        details.append(f"| {name} | {prog} | {cells[name, prog]} | {output} |")
 
     lines = [
         "# Pedigree cleaners compared on the fixtures",

@@ -4,6 +4,7 @@ parent_not_a_row	Parent referenced but not a row	father 9 of id 5 has no row
 missing_parent_both_roles	Parent referenced but not a row	9 has no row and is the mother of 6 and the father of 7
 dup_exact	Duplicate ID	id 4 appears twice, identical rows
 dup_conflict	Duplicate ID	id 4 appears twice, the second row with no parents
+dup_conflict_fewer_first	Duplicate ID	id 4 appears twice, the first row with no parents (tells 'first row' from 'most parents')
 cycle2_mixed	Cycle / own ancestor	3 is the mother of 2, 2 is the father of 3
 cycle2_dam_only	Cycle / own ancestor	1 and 3 are each other's mother; 4 and 5 descend from the cycle
 cycle3_mixed	Cycle / own ancestor	separate 3-cycle 10 -(mother)-> 12 -(father)-> 11 -(mother)-> 10
