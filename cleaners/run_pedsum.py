@@ -28,6 +28,9 @@ MODES: dict[str, list[str]] = {
     "drop": ["--drop-offending"],
     "allow-missing-sex": ["--allow-missing-sex"],
     "no-sex-check": ["--no-sex-check"],
+    # The options pedsum ADR 0006 added after the R cleaners' behaviour.
+    "missing-parent-token-0": ["--missing-parent-token", "0"],
+    "break-cycles": ["--break-cycles"],
 }
 OUTCOME = {0: "ok", 1: "fixed", 2: "blocked"}
 SEX = {"1": "M", "2": "F", "0": "U", "-1": "U", "": "U"}
