@@ -21,3 +21,66 @@ openpyxl = "*"
 [tasks]
 harness = { cmd = "python run_published.py", description = "Run every dataset and write results/" }
 lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }
+cleaners-pedsum = { cmd = "python cleaners/run_pedsum.py", description = "Run pedsum validate on every cleaner fixture" }
+cleaners-pwe = { cmd = "python cleaners/pedig_with_errors.py", description = "pedsum vs optiSel::prePed on PedigWithErrors (run cleaners-pwe-r first)" }
+cleaners-compare = { cmd = "python cleaners/compare.py", description = "Tabulate the R cleaners against pedsum (run both cleaner tasks first)" }
+
+# The R pedigree cleaners compared in cleaners/ (pedsum#7). Dependencies come
+# from conda-forge where it has them; cleaners/install.R puts the CRAN-only
+# packages, at the versions it pins, into .r-lib/ from a dated CRAN snapshot.
+[feature.r.dependencies]
+r-base = "4.5.*"
+c-compiler = "*"
+cxx-compiler = "*"
+fortran-compiler = "*"
+make = "*"
+r-anytime = "*"
+r-bslib = "*"
+"r-data.table" = "*"
+r-doparallel = "*"
+r-dplyr = "*"  # purgeR::ped_rename calls dplyr, which purgeR only Suggests
+r-dosnow = "*"
+r-dt = "*"
+r-ecosolver = "*"
+r-foreach = "*"
+"r-futile.logger" = "*"
+r-ggplot2 = "*"
+r-htmltable = "*"
+r-igraph = "*"
+r-kinship2 = "==1.9.6.2"
+r-lattice = "*"
+r-lifecycle = "*"
+r-lme4 = "*"
+r-lubridate = "*"
+r-magic = "*"
+r-mass = "*"
+r-matrix = "*"
+r-openxlsx = "*"
+r-plotrix = "*"
+r-plyr = "*"
+r-progress = "*"
+r-pspline = "*"
+r-purrr = "*"
+r-quadprog = "*"
+r-rcpp = "*"
+r-rcpparmadillo = "*"
+r-rcppprogress = "*"
+r-readxl = "*"
+r-reshape2 = "*"
+r-rlabkey = "*"
+r-sessioninfo = "*"
+r-shiny = "*"
+r-stringi = "*"
+r-stringr = "*"
+
+[feature.r.activation.env]
+R_LIBS_USER = "$PIXI_PROJECT_ROOT/.r-lib"
+
+[feature.r.tasks]
+r-setup = { cmd = "Rscript cleaners/install.R", description = "Install the CRAN-only R cleaners into .r-lib/" }
+cleaners-pwe-r = { cmd = "Rscript cleaners/pedig_with_errors.R", depends-on = ["r-setup"], description = "Export optiSel::PedigWithErrors and prePed's repair of it" }
+cleaners-bugs = { cmd = "Rscript cleaners/upstream_bugs.R", depends-on = ["r-setup"], description = "Reproduce the suspected bugs in other R packages" }
+cleaners-r = { cmd = "Rscript cleaners/run_r.R", depends-on = ["r-setup"], description = "Run every R cleaner on every fixture" }
+
+[environments]
+r = { features = ["r"], no-default-feature = true }
