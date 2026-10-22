@@ -21,11 +21,14 @@ Citations were checked against Crossref and doi.org on 2026-10-04, as
 described in `docs/benchmark-pedigrees.md`. Fields that could not be confirmed
 are marked `TODO: verify`.
 
-Published targets for B1–B3 are now in the harness: Boichard et al. (1997)
-Table II gives fe, fa and Ng for three toy pedigrees, and the ENDOG User's
-Guide gives fe 67.73 and fa 25 for its example (not yet in the harness).
+The published targets for B1–B3 are checked in [pedigree-graph-validate](https://github.com/rwaples/pedigree-graph-validate):
+Boichard et al. (1997) Table II gives fe, fa and Ng for three toy pedigrees,
+and purgeR and visPedigree give fe and fa for their bundled studbooks. The
+ENDOG User's Guide gives fe 67.73 and fa 25 for its example (in neither
+harness yet).
 
-The Dryad pedigrees add GAP targets for B1 and C1:
+The Dryad pedigrees add targets for B1 (checked in pedigree-graph-validate)
+and C1 (a GAP here):
 
 - **B1.** For the Florida scrub-jay, Linderoth et al. (2025, Results) report
   that one breeding pair (RLS-K and WSA-K) "collectively accounted for 24%

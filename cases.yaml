@@ -61,12 +61,6 @@
 #                           with |difference| <= `match_tol`, default 1e-6),
 #                           n_compared, sum_ref or sum_pedsum (sums over the
 #                           compared rows)
-#   effective:<estimator>.<field>
-#                           a field of effective_size.yaml; datasets with a
-#                           reference_column run with --reference-col
-#   engine:<name>           computed with the pedigree_graph API that pedsum
-#                           depends on, for statistics the pedsum CLI does not
-#                           expose yet (see docs/missing-statistics.md)
 #   gap                     not reported by pedsum or pedigree_graph; listed so
 #                           the published value is not lost
 #
@@ -364,20 +358,9 @@ checks:
   - {dataset: atlas, stat: F of last row (id 948), id: "948", published: 0.2345642, tol: 1.0e-6, via: annotated:of:F, source: purgeR test_inbreeding.R:13}
   - {dataset: atlas, stat: sum of equivalent complete generations, published: 5500.627, tol: 1.0e-3, via: annotated:sum:ecg, source: purgeR test_population_parameters.R:56}
   - {dataset: atlas, stat: max equivalent complete generations, published: 10.0639, tol: 1.0e-4, via: annotated:max:ecg, source: purgeR test_population_parameters.R:54}
-  - {dataset: atlas, stat: "Ne_iΔF, reference = target (purgeR uses t-1)", published: 14.01041, tol: 1.0e-4, via: effective:ne_individual_delta_f.ne_unrelated_founders, source: purgeR test_population_parameters.R:74; Heredity 2021 abstract (14)}
-  - {dataset: atlas, stat: "Ne_iΔF, all rows (purgeR uses t-1, rows with t<=1 count as ΔF=0)", published: 8.184803, tol: 1.0e-4, via: engine:ne_idf_t1_all, gap: D2, status_if_differs: expected_difference, note: "pedigree_graph drops rows with t<=1 rather than counting them as zero", source: purgeR test_population_parameters.R:67}
-  - {dataset: atlas, stat: founder equivalents fe (reference = target), published: 3.583086, via: gap, gap: B1, source: purgeR test_population_parameters.R:20}
-  - {dataset: atlas, stat: effective number of ancestors fa (reference = target), published: 3.583086, via: gap, gap: B2, source: purgeR test_population_parameters.R:21}
   - {dataset: dama, stat: N, published: 1316, via: summary:n_total, source: purgeR data}
-  - {dataset: dama, stat: "Ne_iΔF, reference = target (purgeR uses t-1)", published: 11.09927, tol: 1.0e-4, via: effective:ne_individual_delta_f.ne_unrelated_founders, source: purgeR vignette; Heredity 2021 abstract (11)}
-  - {dataset: dama, stat: founder equivalents fe (reference = target), published: 2.614750, via: gap, gap: B1, source: purgeR tutorial vignette, pop_Nancestors table}
   - {dataset: arrui, stat: N, published: 380, via: summary:n_total, source: purgeR data}
-  - {dataset: arrui, stat: "Ne_iΔF, reference = target (purgeR uses t-1)", published: 3.83865, tol: 1.0e-4, via: effective:ne_individual_delta_f.ne_unrelated_founders, source: purgeR vignette; Heredity 2021 abstract (4)}
-  - {dataset: arrui, stat: founder equivalents fe (reference = target), published: 1.769424, via: gap, gap: B1, source: purgeR tutorial vignette, pop_Nancestors table}
   - {dataset: dorcas, stat: N, published: 1279, via: summary:n_total, source: purgeR data}
-  - {dataset: dorcas, stat: "Ne_iΔF, reference = target (purgeR uses t-1)", published: 39.32125, tol: 1.0e-4, via: effective:ne_individual_delta_f.ne_unrelated_founders, source: purgeR vignette; Heredity 2021 abstract (39)}
-  - {dataset: dorcas, stat: founder equivalents fe (reference = target), published: 13.38647, via: gap, gap: B1, source: purgeR test_population_parameters.R:29}
-  - {dataset: dorcas, stat: effective number of ancestors fa (reference = target), published: 12.9906, via: gap, gap: B2, source: purgeR test_population_parameters.R:30}
 
   # --- Darwin/Wedgwood (purgeR) ----------------------------------------------
   - {dataset: darwin, stat: N, published: 63, via: summary:n_total, source: purgeR data}
@@ -402,8 +385,6 @@ checks:
   - {dataset: deep_ped, stat: ECG of K110998Q, id: K110998Q, published: 4.606445, tol: 1.0e-6, via: annotated:of:ecg, source: visPedigree vignette, pedstats ecg}
   - {dataset: deep_ped, stat: ECG of K110999Z, id: K110999Z, published: 6.875977, tol: 1.0e-6, via: annotated:of:ecg, source: visPedigree vignette, pedstats ecg}
   - {dataset: deep_ped, stat: complete generations of K110998Q, id: K110998Q, published: 2, via: gap, gap: A2, source: visPedigree vignette, pedstats ecg}
-  - {dataset: deep_ped, stat: "fe (reference = Gen >= max-1)", published: 64.73344, via: gap, gap: B1, source: visPedigree vignette, pediv summary}
-  - {dataset: deep_ped, stat: "fa (reference = Gen >= max-1)", published: 44.12033, via: gap, gap: B2, source: visPedigree vignette, pediv summary}
   - {dataset: deep_ped, stat: "mean coancestry (reference = Gen >= max-1)", published: 0.0260693, via: gap, gap: C1, source: visPedigree vignette, pediv summary}
 
   # --- Mrode (2005) example pedigree, via nadiv::Mrode2 ----------------------
@@ -433,21 +414,12 @@ checks:
   - {dataset: boichard2, stat: founders, published: 6, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
   - {dataset: boichard2, stat: F of animal 19, id: "19", published: 0.25, tol: 1.0e-9, via: annotated:of:F, source: tabular method (hand-derived; parents are full sibs)}
   - {dataset: boichard2, stat: sum of F, published: 0.5, tol: 1.0e-9, via: annotated:sum:F, source: tabular method (hand-derived; only 19 and 20 are inbred)}
-  - {dataset: boichard2, stat: "fe (reference = generation 3)", published: 5.6, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:121"}
-  - {dataset: boichard2, stat: "fa (reference = generation 3)", published: 2.94, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:166"}
-  - {dataset: boichard2, stat: "founder genomes Ng (reference = generation 3)", published: 2.5, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
   - {dataset: boichard2a, stat: N, published: 14, via: summary:n_total, source: Boichard et al. 1997 fig. 2 (p. 12)}
   - {dataset: boichard2a, stat: founders, published: 4, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
   - {dataset: boichard2a, stat: sum of F, published: 0, tol: 1.0e-9, via: annotated:sum:F, source: tabular method (hand-derived; 5 and 6 are unrelated)}
-  - {dataset: boichard2a, stat: "fe (reference = generation 3)", published: 4.0, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:91"}
-  - {dataset: boichard2a, stat: "fa (reference = generation 3)", published: 2.0, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:136"}
-  - {dataset: boichard2a, stat: "founder genomes Ng (reference = generation 3)", published: 1.8, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
   - {dataset: boichard2b, stat: N, published: 6, via: summary:n_total, source: Boichard et al. 1997 fig. 2 (p. 12)}
   - {dataset: boichard2b, stat: founders, published: 2, via: summary:pedigree.structure.size_structure.n_founders, source: Boichard et al. 1997 table II (p. 12)}
   - {dataset: boichard2b, stat: F of animal 5, id: "5", published: 0.25, tol: 1.0e-9, via: annotated:of:F, source: tabular method (hand-derived; parents are full sibs)}
-  - {dataset: boichard2b, stat: "fe (reference = generation 3)", published: 2.0, via: gap, gap: B1, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:106"}
-  - {dataset: boichard2b, stat: "fa (reference = generation 3)", published: 2.0, via: gap, gap: B2, source: "Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:151"}
-  - {dataset: boichard2b, stat: "founder genomes Ng (reference = generation 3)", published: 1.1, via: gap, gap: B3, source: Boichard et al. 1997 table II (p. 12)}
 
   # --- Kinsources "Ancien Régime" (dataset 53; Puck statistics on the dataset page) ---
   - {dataset: ancien_regime, stat: N, published: 5891, via: summary:n_total, source: "kinsources.net dataset-53-ancien-regime, Statistics"}
@@ -528,9 +500,6 @@ checks:
   - {dataset: scrub_jay, stat: "birds with F within 1e-6 of the makeA diagonal", published: 678, via: "reference:makeA_F:n_within:F", status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug; 23 diagonal entries are below 1 (F < 0), impossible for a valid A", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
   - {dataset: scrub_jay, stat: "max |ΔF| vs the makeA diagonal", published: 0, tol: 1.0e-6, via: "reference:makeA_F:max_abs_diff:F", status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
   - {dataset: scrub_jay, stat: "inbred birds (makeA diagonal > 1)", published: 222, via: summary:pedigree.relatedness.inbreeding.n_inbred, status_if_differs: expected_difference, note: "nadiv 2.17.2 makeA() bug; the correct A gives 126", source: "Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt"}
-  - {dataset: scrub_jay, stat: "share of founder ancestry from RLS-K + WSA-K, 2017 population", published: 0.32, via: gap, gap: B1, source: "Linderoth et al. 2025, Results ('a maximum contribution of 32% in 2017'); Dryad T_IE_20230512_2017_pop_contribution.pedstat1 gives 0.3223"}
-  - {dataset: scrub_jay, stat: "mean share from RLS-K + WSA-K, 2008-2022", published: 0.24, via: gap, gap: B1, source: "Linderoth et al. 2025, Results ('24% (SD = 0.06) of the expected CR population founder ancestry'); the deposited pedstat1 files give 0.2379 (SD 0.0645)"}
-  - {dataset: scrub_jay, stat: "founders contributing to the 2022 cohort", published: 24, via: gap, gap: B1, source: "Linderoth et al. 2025, Dryad number_contributing_lineages_to_cohorts_cr_ped_20230512.tsv"}
 
   # --- Seychelles warbler (Sparks et al. 2022; pedantics pedigreeStats, Table S3, pruned pedigree) ---
   - {dataset: seychelles_warbler, stat: records, published: 1482, via: summary:n_total, source: "Sparks et al. 2022 Mol Ecol 31:6324, §2.3, Genetic pedigree; preprint SI Table S3 (EcoEvoRxiv 10.32942/osf.io/eq2af)"}

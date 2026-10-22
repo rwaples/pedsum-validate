@@ -98,9 +98,8 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 | Status | Meaning |
 |---|---|
 | PASS | pedsum's own output matches the published value. |
-| PASS (engine) | Matches, but computed by calling the `pedigree_graph` API directly, because the pedsum CLI does not report this statistic. None at present. |
 | DIFF | A known convention difference; the `note` column explains it. |
-| GAP | Neither pedsum nor `pedigree_graph` computes it. The published value is recorded for when it does. |
+| GAP | pedsum does not report it. The published value is recorded for when it does. |
 | FAIL / ERROR | A mismatch, or a run failure. Investigate. |
 
 ## Findings so far
@@ -128,15 +127,12 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
   - Every pedantics count published for the Soay sheep (Bérénos et al. 2014,
     Table 2) and the Seychelles warbler (Sparks et al., Table S3), except the
     half-sib pairs (below).
-- **Ne from individual ΔF (Gutiérrez et al. 2008).** With
-  `effective-size --reference-col`, all four purgeR studbooks reproduce the
-  published reference-population Ne (14.01, 11.10, 3.84, 39.32), but only in the
-  `ne_unrelated_founders` field. That field uses `t − 1` in the exponent, as
-  purgeR does (`purgeR/R/Ne.R:44`); the headline `ne` uses `t` and gives 15.79
-  for atlas. `effective_size.yaml` rounds to 4 decimals, so these checks use a
-  tolerance of 1e-4.
-- **Ne over all rows.** purgeR keeps rows with `t ≤ 1` and counts them as ΔF = 0,
-  giving 8.18 for atlas. `pedigree_graph` drops those rows, giving 8.03 (gap D2).
+- **Ne and lineage statistics moved.** The Ne from individual ΔF, fe, fa and
+  Ng checks (purgeR's four studbooks, `deep_ped`, Boichard et al. 1997 and
+  the scrub-jay's founder contributions) now run in [pedigree-graph-validate](https://github.com/rwaples/pedigree-graph-validate),
+  which reruns purgeR on the same pedigrees and keeps each published value as
+  an INFO row. [`differences.md`](differences.md) sections 1 and 2 still
+  explain how to read pedsum's `ne` and `ne_unrelated_founders`.
 - **Missing sex.** `validate` keeps an individual with unknown sex that is not a
   parent, with sex 0 and a WARNING (pedsum ADR 0006, rwaples/pedsum#25). Before,
   it refused one, and 20 datasets here needed `--allow-missing-sex` for that

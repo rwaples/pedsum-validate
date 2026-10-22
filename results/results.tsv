@@ -6,20 +6,9 @@ atlas	max F	0.4277344	0.4277344	PASS	annotated:max:F		purgeR test_inbreeding.R:1
 atlas	F of last row (id 948)	0.2345642	0.2345642	PASS	annotated:of:F		purgeR test_inbreeding.R:13	
 atlas	sum of equivalent complete generations	5500.627	5500.627	PASS	annotated:sum:ecg		purgeR test_population_parameters.R:56	
 atlas	max equivalent complete generations	10.0639	10.0639	PASS	annotated:max:ecg		purgeR test_population_parameters.R:54	
-atlas	Ne_iΔF, reference = target (purgeR uses t-1)	14.01041	14.0104	PASS	effective:ne_individual_delta_f.ne_unrelated_founders		purgeR test_population_parameters.R:74; Heredity 2021 abstract (14)	
-atlas	Ne_iΔF, all rows (purgeR uses t-1, rows with t<=1 count as ΔF=0)	8.184803	8.029395	DIFF	engine:ne_idf_t1_all	D2	purgeR test_population_parameters.R:67	pedigree_graph drops rows with t<=1 rather than counting them as zero
-atlas	founder equivalents fe (reference = target)	3.583086		GAP	gap	B1	purgeR test_population_parameters.R:20	
-atlas	effective number of ancestors fa (reference = target)	3.583086		GAP	gap	B2	purgeR test_population_parameters.R:21	
 dama	N	1316	1316	PASS	summary:n_total		purgeR data	
-dama	Ne_iΔF, reference = target (purgeR uses t-1)	11.09927	11.0993	PASS	effective:ne_individual_delta_f.ne_unrelated_founders		purgeR vignette; Heredity 2021 abstract (11)	
-dama	founder equivalents fe (reference = target)	2.61475		GAP	gap	B1	purgeR tutorial vignette	
 arrui	N	380	380	PASS	summary:n_total		purgeR data	
-arrui	Ne_iΔF, reference = target (purgeR uses t-1)	3.83865	3.8386	PASS	effective:ne_individual_delta_f.ne_unrelated_founders		purgeR vignette; Heredity 2021 abstract (4)	
-arrui	founder equivalents fe (reference = target)	1.769424		GAP	gap	B1	purgeR tutorial vignette	
 dorcas	N	1279	1279	PASS	summary:n_total		purgeR data	
-dorcas	Ne_iΔF, reference = target (purgeR uses t-1)	39.32125	39.3212	PASS	effective:ne_individual_delta_f.ne_unrelated_founders		purgeR vignette; Heredity 2021 abstract (39)	
-dorcas	founder equivalents fe (reference = target)	13.38647		GAP	gap	B1	purgeR test_population_parameters.R:29	
-dorcas	effective number of ancestors fa (reference = target)	12.9906		GAP	gap	B2	purgeR test_population_parameters.R:30	
 darwin	N	63	63	PASS	summary:n_total		purgeR data	
 darwin	F of William Erasmus Darwin	0.06298828	0.06298828	PASS	annotated:of:F		purgeR tutorial vignette; Berra	
 genea140	N	41523	41523	PASS	summary:n_total		Gauvin et al. 2015	
@@ -38,8 +27,6 @@ deep_ped	ECG of K110997Q	7.616211	7.616211	PASS	annotated:of:ecg		visPedigree vi
 deep_ped	ECG of K110998Q	4.606445	4.606445	PASS	annotated:of:ecg		visPedigree vignette	
 deep_ped	ECG of K110999Z	6.875977	6.875977	PASS	annotated:of:ecg		visPedigree vignette	
 deep_ped	complete generations of K110998Q	2		GAP	gap	A2	visPedigree vignette	
-deep_ped	fe (reference = Gen >= max-1)	64.73344		GAP	gap	B1	visPedigree vignette	
-deep_ped	fa (reference = Gen >= max-1)	44.12033		GAP	gap	B2	visPedigree vignette	
 deep_ped	mean coancestry (reference = Gen >= max-1)	0.0260693		GAP	gap	C1	visPedigree vignette	
 mrode2	F of animal 5	0.125	0.125	PASS	annotated:of:F		tabular method (hand-derived)	
 mrode2	F of animal 6	0.125	0.125	PASS	annotated:of:F		tabular method (hand-derived)	
@@ -56,21 +43,12 @@ boichard2	N	20	20	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)
 boichard2	founders	6	6	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
 boichard2	F of animal 19	0.25	0.25	PASS	annotated:of:F		tabular method (hand-derived; parents are full sibs)	
 boichard2	sum of F	0.5	0.5	PASS	annotated:sum:F		tabular method (hand-derived; only 19 and 20 are inbred)	
-boichard2	fe (reference = generation 3)	5.6		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:121	
-boichard2	fa (reference = generation 3)	2.94		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:166	
-boichard2	founder genomes Ng (reference = generation 3)	2.5		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
 boichard2a	N	14	14	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)	
 boichard2a	founders	4	4	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
 boichard2a	sum of F	0	0	PASS	annotated:sum:F		tabular method (hand-derived; 5 and 6 are unrelated)	
-boichard2a	fe (reference = generation 3)	4		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:91	
-boichard2a	fa (reference = generation 3)	2		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:136	
-boichard2a	founder genomes Ng (reference = generation 3)	1.8		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
 boichard2b	N	6	6	PASS	summary:n_total		Boichard et al. 1997 fig. 2 (p. 12)	
 boichard2b	founders	2	2	PASS	summary:pedigree.structure.size_structure.n_founders		Boichard et al. 1997 table II (p. 12)	
 boichard2b	F of animal 5	0.25	0.25	PASS	annotated:of:F		tabular method (hand-derived; parents are full sibs)	
-boichard2b	fe (reference = generation 3)	2		GAP	gap	B1	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:106	
-boichard2b	fa (reference = generation 3)	2		GAP	gap	B2	Boichard et al. 1997 table II (p. 12); PyPedal pyp_tests.py:151	
-boichard2b	founder genomes Ng (reference = generation 3)	1.1		GAP	gap	B3	Boichard et al. 1997 table II (p. 12)	
 ancien_regime	N	5891	5891	PASS	summary:n_total		kinsources.net dataset-53-ancien-regime, Statistics	
 ancien_regime	men	2889	2890	DIFF	summary:pedigree.structure.size_structure.n_male		kinsources.net dataset 53, Statistics	pedsum infers the sex of 1 X-coded father from his role; Puck counts him as unknown
 ancien_regime	women	2970	2971	DIFF	summary:pedigree.structure.size_structure.n_female		kinsources.net dataset 53, Statistics	pedsum infers the sex of 1 X-coded mother from her role
@@ -133,9 +111,6 @@ scrub_jay	sum of F over the 678 birds (diag of makeA − 1)	10.62646	8.696777	DI
 scrub_jay	birds with F within 1e-6 of the makeA diagonal	678	499	DIFF	reference:makeA_F:n_within:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug; 23 diagonal entries are below 1 (F < 0), impossible for a valid A
 scrub_jay	max |ΔF| vs the makeA diagonal	0	0.0625	DIFF	reference:makeA_F:max_abs_diff:F		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug
 scrub_jay	inbred birds (makeA diagonal > 1)	222	126	DIFF	summary:pedigree.relatedness.inbreeding.n_inbred		Linderoth et al. 2025, Dryad cr_ped_20230512_relatedness_matrix.txt	nadiv 2.17.2 makeA() bug; the correct A gives 126
-scrub_jay	share of founder ancestry from RLS-K + WSA-K, 2017 population	0.32		GAP	gap	B1	Linderoth et al. 2025, Results ('a maximum contribution of 32% in 2017'); Dryad T_IE_20230512_2017_pop_contribution.pedstat1 gives 0.3223	
-scrub_jay	mean share from RLS-K + WSA-K, 2008-2022	0.24		GAP	gap	B1	Linderoth et al. 2025, Results ('24% (SD = 0.06) of the expected CR population founder ancestry'); the deposited pedstat1 files give 0.2379 (SD 0.0645)	
-scrub_jay	founders contributing to the 2022 cohort	24		GAP	gap	B1	Linderoth et al. 2025, Dryad number_contributing_lineages_to_cohorts_cr_ped_20230512.tsv	
 seychelles_warbler	records	1482	1482	PASS	summary:n_total		Sparks et al. 2022 Mol Ecol 31:6324, §2.3, Genetic pedigree; preprint SI Table S3 (EcoEvoRxiv 10.32942/osf.io/eq2af)	
 seychelles_warbler	offspring (at least one parent known)	1268	1268	PASS	summary:pedigree.structure.size_structure.n_nonfounders		Sparks et al. preprint SI Table S3	
 seychelles_warbler	maternities	1217	1217	PASS	summary:pedigree.structure.size_structure.n_mother_links		Sparks et al. 2022, §2.3, Genetic pedigree; SI Table S3	

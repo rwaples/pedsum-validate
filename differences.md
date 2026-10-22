@@ -12,7 +12,8 @@ different pedigree or a different definition, or, for the Florida scrub-jay
 
 ## 1. Ne from individual ΔF: `ne` is 13–20% above purgeR's published value
 
-This is the one difference that matters in practice.
+This is the one difference that matters in practice. The checks behind this
+section and the next now run in [pedigree-graph-validate](https://github.com/rwaples/pedigree-graph-validate).
 
 | Studbook | pedsum `ne` (exponent 1/t) | `ne_unrelated_founders` (1/(t−1)) | purgeR / Heredity 2021 | `ne` ÷ published |
 |---|---|---|---|---|
@@ -57,14 +58,11 @@ All values are over purgeR's reference population (`target == 1`, passed with
 - **Practice.** Published Ne values almost always name their reference group,
   so comparisons should pass `--reference-col`.
 
-## 3. Ne over all rows: rows with t ≤ 1 (minor, about 2%)
+## 3. Ne over all rows: rows with t ≤ 1 (moved)
 
-- **Values.** For atlas over every row, purgeR gives 8.18 and pedigree-graph
-  gives 8.03, both with 1/(t − 1).
-- **Cause.** purgeR keeps individuals with t ≤ 1 and gives them ΔF = 0;
-  pedigree-graph leaves them out.
-- **Where it matters.** Only for averages over a whole pedigree that includes
-  shallow rows. The harness reports this check as DIFF.
+Moved to [pedigree-graph-validate](https://github.com/rwaples/pedigree-graph-validate) as its difference D2: purgeR counts
+rows with t ≤ 1 as ΔF = 0, pedigree-graph leaves them out (atlas: 8.18
+against 8.03).
 
 ## 4. Rum red deer: a different pedigree and a different subset
 
