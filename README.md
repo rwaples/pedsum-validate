@@ -136,8 +136,9 @@ For each dataset in [`cases.yaml`](cases.yaml), the script:
 - **Missing sex.** `validate` keeps an individual with unknown sex that is not a
   parent, with sex 0 and a WARNING (pedsum ADR 0006, rwaples/pedsum#25). Before,
   it refused one, and 20 datasets here needed `--allow-missing-sex` for that
-  alone, from 1 animal in dama to 4,691 in soay_ped2. Only black_robin still passes the
-  flag, for 2 birds used as both mother and father. `effective-size` refuses
+  alone, from 1 animal in dama to 4,691 in soay_ped2. No dataset passes it now:
+  black_robin's 2 birds used as both mother and father are made female instead
+  (see [`differences.md`](differences.md)). `effective-size` refuses
   unknown sex only for the three estimators that use it, so
   `ne_individual_delta_f` runs on these studbooks.
 - **Rum red deer.** pedsum's F on the Figshare pedigree equals an independent

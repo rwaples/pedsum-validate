@@ -403,6 +403,9 @@ def convert(table: dict[str, list[str | None]], spec: dict[str, Any], out: Path)
     sex_col = cols.get("sex")
     sex_map = {str(k): v for k, v in spec.get("sex_map", {}).items()}
     sexes = table[sex_col] if sex_col else [None] * len(ids)
+    sex_overrides = {str(k): v for k, v in spec.get("sex_overrides", {}).items()}
+    if unmatched := sex_overrides.keys() - set(ids):
+        raise ValueError(f"sex_overrides: ids {sorted(unmatched)} have no row")
     ref_col = spec.get("reference_column")
     refs = table[ref_col] if ref_col else [None] * len(ids)
 
@@ -413,6 +416,7 @@ def convert(table: dict[str, list[str | None]], spec: dict[str, Any], out: Path)
             if token is None:
                 raise ValueError(f"row {i}: missing id")
             sex = sex_map.get(sexes[i], "") if sexes[i] is not None else ""
+            sex = sex_overrides.get(token, sex)
             ref = 1 if refs[i] in ("1", "1.0") else 0
             w.writerow(
                 [
@@ -618,7 +622,8 @@ def run_dataset(name: str, spec: dict[str, Any], cache: Path, work: Path) -> tup
     }
 
     extra = ["--allow-missing-sex"] if spec.get("allow_missing_sex") else []
-    run_pedsum(["validate", "--in", str(ds / "input.tsv"), "--out", str(ds / "validate"), *extra], log)
+    repair = ["--break-role-conflicts"] if spec.get("break_role_conflicts") else []
+    run_pedsum(["validate", "--in", str(ds / "input.tsv"), "--out", str(ds / "validate"), *extra, *repair], log)
     fixed = ds / "validate" / "validate.tsv.gz"
     if not fixed.exists():
         return None, f"validate produced no fixed pedigree; see {log}"

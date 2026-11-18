@@ -21,8 +21,12 @@
 #   columns                 {id, mother, father, sex?}: the source columns
 #   missing_parent          tokens meaning "no parent" (R NA always does)
 #   sex_map                 source sex code -> PLINK code: 1 (male) or 2 (female)
-#   allow_missing_sex       pass --allow-missing-sex to validate and summarize (needed
-#                           only for an unsexed individual used as both mother and father)
+#   allow_missing_sex       pass --allow-missing-sex to validate and summarize
+#   sex_overrides           {id: 1 | 2}: a PLINK sex code for an id, over sex_map; for
+#                           an unsexed individual used as both mother and father, which
+#                           summarize refuses
+#   break_role_conflicts    pass --break-role-conflicts to validate: clear the parent
+#                           links that contradict a recorded sex
 #   reference_column        a 0/1 column marking the reference population;
 #                           the dataset then also runs effective-size
 #                           --reference-col
@@ -266,8 +270,13 @@ datasets:
     columns: {id: IndividualID, mother: DamID, father: SireID}
     missing_parent: []  # R NA
     # No sex column: validate sexes each parent from its role, but 2 birds are used as both mother
-    # and father (sex_role_ambiguity), which blocks without the flag.
-    allow_missing_sex: true
+    # and father, which summarize refuses (pedsum 0.17). Bird 22080 is the mother of 9 chicks
+    # and the father of 5, bird 22082 the mother of 17 and the father of 1. No dam/sire swap
+    # makes the file consistent (their mates appear in one role only), so each is made female,
+    # its majority role, and validate clears the 6 links where it is the father. The authors'
+    # F keeps those links, so the F checks differ.
+    sex_overrides: {22080: 2, 22082: 2}
+    break_role_conflicts: true
     reference_values:
       kennedy_F: {column: IndividualF}
       weiser_F: {dryad_file: 39818, sha256: 1e14f96ea94aff5a73426670e03854ff01ee7f9e35e8fe0c4cf6bace1811f49e, format: csv, id_column: individual, value_column: F}
@@ -482,13 +491,13 @@ checks:
   # --- Chatham Island black robin (Kennedy et al. 2014 DatasheetC) -----------
   - {dataset: black_robin, stat: N, published: 1348, via: summary:n_total, source: "Kennedy et al. 2014, Dryad 10.5061/dryad.16g74, DatasheetC (1348 rows)"}
   - {dataset: black_robin, stat: "founders (Weiser: the two birds of the single-pair bottleneck)", published: 2, via: summary:pedigree.structure.size_structure.n_founders, status_if_differs: expected_difference, note: "Weiser counts the bottleneck pair as founders; the male's ancestry to his grandparents is in the file, so it has 6 rows with no known parent", source: "Weiser 2014 PhD thesis (Otago, hdl 10523/4852), ch. 5 Methods, 'Dataset and pedigree' (PDF p. 76)"}
-  - {dataset: black_robin, stat: sum of F (authors' IndividualF), published: 459.6190968, tol: 1.0e-6, via: annotated:sum:F, source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (sum)"}
-  - {dataset: black_robin, stat: max F (authors' IndividualF), published: 0.654296875, tol: 1.0e-9, via: annotated:max:F, source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (max)"}
-  - {dataset: black_robin, stat: "max F ('ranged from 0.25 ... to 0.65')", published: 0.65, tol: 0.005, via: annotated:max:F, source: "Weiser 2014 PhD thesis, ch. 5 Results (PDF p. 82); the chapter is published as Weiser et al. 2016 Evolution 70:154-166"}
-  - {dataset: black_robin, stat: "max |ΔF| vs authors' IndividualF (1348 birds)", published: 0, tol: 1.0e-6, via: "reference:kennedy_F:max_abs_diff:F", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
-  - {dataset: black_robin, stat: "birds with F within 1e-6 of IndividualF", published: 1348, via: "reference:kennedy_F:n_within:F", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
-  - {dataset: black_robin, stat: "birds with F within 1e-6 of Weiser et al. DatasetS1 F", published: 1104, via: "reference:weiser_F:n_within:F", source: "Weiser et al. 2016, Dryad 10.5061/dryad.81tg6, DatasetS1, F column (1104 birds)"}
-  - {dataset: black_robin, stat: "max |ΔF| vs Weiser et al. DatasetS1 F", published: 0, tol: 1.0e-6, via: "reference:weiser_F:max_abs_diff:F", source: "Weiser et al. 2016, Dryad DatasetS1, F column"}
+  - {dataset: black_robin, stat: sum of F (authors' IndividualF), published: 459.6190968, tol: 1.0e-6, via: annotated:sum:F, status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (sum)"}
+  - {dataset: black_robin, stat: max F (authors' IndividualF), published: 0.654296875, tol: 1.0e-9, via: annotated:max:F, status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF column (max)"}
+  - {dataset: black_robin, stat: "max F ('ranged from 0.25 ... to 0.65')", published: 0.65, tol: 0.005, via: annotated:max:F, status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Weiser 2014 PhD thesis, ch. 5 Results (PDF p. 82); the chapter is published as Weiser et al. 2016 Evolution 70:154-166"}
+  - {dataset: black_robin, stat: "max |ΔF| vs authors' IndividualF (1348 birds)", published: 0, tol: 1.0e-6, via: "reference:kennedy_F:max_abs_diff:F", status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
+  - {dataset: black_robin, stat: "birds with F within 1e-6 of IndividualF", published: 1348, via: "reference:kennedy_F:n_within:F", status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Kennedy et al. 2014, Dryad DatasheetC, IndividualF"}
+  - {dataset: black_robin, stat: "birds with F within 1e-6 of Weiser et al. DatasetS1 F", published: 1104, via: "reference:weiser_F:n_within:F", status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Weiser et al. 2016, Dryad 10.5061/dryad.81tg6, DatasetS1, F column (1104 birds)"}
+  - {dataset: black_robin, stat: "max |ΔF| vs Weiser et al. DatasetS1 F", published: 0, tol: 1.0e-6, via: "reference:weiser_F:max_abs_diff:F", status_if_differs: expected_difference, note: "the file names birds 22080 and 22082 as both mother and father; each is made female and validate clears the 6 links where it is the father, which the authors' F keeps", source: "Weiser et al. 2016, Dryad DatasetS1, F column"}
 
   # --- Florida scrub-jay (Linderoth et al. 2025) -------------------------------
   # The authors' A matrix was built with nadiv 2.17.2, whose makeA() mis-ordered the

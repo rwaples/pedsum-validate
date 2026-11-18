@@ -231,8 +231,17 @@ recursion, for every individual of these pedigrees:
     and a WARNING (pedsum ADR 0006, rwaples/pedsum#25). Before, it refused one
     unless `--allow-missing-sex` was given, which 20 datasets here passed for
     that alone. Dropping the flag changed no check's value or status.
-  - black_robin still passes the flag: 2 birds are used as both mother and
-    father, so their sex cannot come from a role (`sex_role_ambiguity`).
+  - black_robin has 2 birds used as both mother and father, so their sex
+    cannot come from a role. pedsum 0.17 refuses such a bird in `summarize`
+    even with `--allow-missing-sex`, and no dam/sire swap makes the file
+    consistent: bird 22080 is the mother of 9 chicks with a bird that is only
+    ever a father, and the father of 5 with a bird that is only ever a
+    mother; bird 22082 is the mother of 17 and the father of 1 in the same
+    way. The harness makes both female (`sex_overrides`), their majority
+    role, and `validate --break-role-conflicts` clears the 6 links where
+    either is the father. The authors' F keeps those links, so the F checks
+    are DIFF: 152 of 1348 birds match IndividualF to 1e-6, and the sum of F
+    is 368.1 against 459.6.
 - **Cleaning.** The R package that published a value may have cleaned the pedigree
   differently. [`cleaners/`](cleaners/README.md) runs eight R cleaners and pedsum on the
   same fixtures. The differences most likely to move a published count:
